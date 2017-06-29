@@ -28,6 +28,11 @@ public class FirebaseHandler {
         pushRef.setValue(user);
         return pushRef.getKey();
     }
+    /**
+     * Returns key of post in firebase, saves to ref "posts"
+     * @param post post object that you want to save to firebase database1
+     *
+     * */
     public static String pushPost(Post post){
         DatabaseReference pushRef = FirebaseDatabase.getInstance().getReference(postRef).push();
         pushRef.setValue(post);

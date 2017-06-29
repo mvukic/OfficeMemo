@@ -4,4 +4,7 @@
     <string name="your_title">Your title</string>
     <string name="content_goes_here">Content goes here</string>
     <string name="post">POST</string>
+    <string name="check_your_values">Check your values</string>
+    <string name="empty_content">Content can\'t be empty</string>
+    <string name="empty_title">Tile can\'t be empty</string>
 </resources>
