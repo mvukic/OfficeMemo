@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.media.Image;
+import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutCompat;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,6 +22,13 @@ import android.widget.Spinner;
 import com.google.firebase.database.FirebaseDatabase;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
+import com.squareup.picasso.Picasso;
+import com.vansuita.pickimage.bean.PickResult;
+import com.vansuita.pickimage.bundle.PickSetup;
+import com.vansuita.pickimage.dialog.PickImageDialog;
+import com.vansuita.pickimage.enums.EPickType;
+import com.vansuita.pickimage.listeners.IPickResult;
+
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -32,7 +42,7 @@ import ruazosa.hr.fer.officememo.Model.Post;
 import ruazosa.hr.fer.officememo.R;
 
 // TODO: 29.6.2017. add description of image using Google Vision API
-public class NewPostActivity extends AppCompatActivity {
+public class NewPostActivity extends AppCompatActivity implements IPickResult {
     private static final int PICK_IMAGE = 13;
     ObservableList<Department> listOfDepartment = new ObservableList<>();
     private View currentView;
@@ -115,16 +125,27 @@ public class NewPostActivity extends AppCompatActivity {
            }
         });
         RxView.clicks(selectImage).subscribe(o -> {
-            Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
-            getIntent.setType("image/*");
+//            Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
+//            getIntent.setType("image/*");
+//
+//            Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//            pickIntent.setType("image/*");
+//
+//            Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//
+//            Intent chooserIntent = Intent.createChooser(getIntent, "Select Image");
+//            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent, takePicture});
+//
+//
+//            startActivityForResult(chooserIntent, PICK_IMAGE);
 
-            Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            pickIntent.setType("image/*");
+            PickImageDialog.build(new PickSetup()
+                    .setCancelText("Cancel")
+                    .setFlip(true)
+                    .setMaxSize(500).setSystemDialog(true).setButtonOrientation(LinearLayoutCompat.VERTICAL)
+                    .setPickTypes(EPickType.CAMERA, EPickType.GALLERY).setGalleryButtonText("Choose from gallery")).show(this);
 
-            Intent chooserIntent = Intent.createChooser(getIntent, "Select Image");
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
 
-            startActivityForResult(chooserIntent, PICK_IMAGE);
         });
 
 
@@ -137,14 +158,23 @@ public class NewPostActivity extends AppCompatActivity {
                 //Display an error
                 return;
             }
-            try {
-                InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
-                selectedImage.setImageBitmap(BitmapFactory.decodeStream(inputStream));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+
+               // InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
+            Picasso.with(this)
+                    .load(data.getData())
+                    .resize(800, 800).centerInside()
+                    .into(selectedImage);
+
+
             //Now you can do whatever you want with your inpustream, save it as file, upload to a server, decode a bitmap...
         }
     }
 
+    @Override
+    public void onPickResult(PickResult pickResult) {
+        Picasso.with(this)
+                .load(pickResult.getUri())
+                .resize(800, 800).centerInside()
+                .into(selectedImage);
+    }
 }
