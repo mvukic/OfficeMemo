@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">OfficeMemo</string>
+    <string name="post_to">Post to:</string>
+    <string name="your_title">Your title</string>
+    <string name="content_goes_here">Content goes here</string>
+    <string name="post">POST</string>
 </resources>

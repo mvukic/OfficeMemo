@@ -25,6 +25,7 @@ public class ObservableList<T> {
         list.add(value);
         onAdd.onNext(value);
     }
+    public List<T> getList(){return list;}
     public Observable<T> getObservable() {
         return onAdd;
     }

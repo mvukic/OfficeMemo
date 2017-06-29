@@ -12,3 +12,8 @@ data class Department(
         var imageUrl: String = "",
         var coverUrl: String = ""
 )
+{
+    override fun toString(): String {
+        return name
+    }
+}
