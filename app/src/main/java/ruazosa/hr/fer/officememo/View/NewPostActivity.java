@@ -17,6 +17,7 @@ import durdinapps.rxfirebase2.DataSnapshotMapper;
 import durdinapps.rxfirebase2.RxFirebaseDatabase;
 import io.reactivex.Observable;
 import ruazosa.hr.fer.officememo.Model.Department;
+import ruazosa.hr.fer.officememo.Model.FirebaseHandler;
 import ruazosa.hr.fer.officememo.Model.ObservableList;
 import ruazosa.hr.fer.officememo.R;
 
@@ -37,8 +38,6 @@ public class NewPostActivity extends AppCompatActivity {
         listOfDepartment.getObservable().subscribe(department -> {
             Snackbar.make((View) findViewById(R.id.textView), department.toString(), Snackbar.LENGTH_LONG).show();
         });
-
-
 
     }
 

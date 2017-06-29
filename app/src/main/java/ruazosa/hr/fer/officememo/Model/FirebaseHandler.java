@@ -13,7 +13,11 @@ public class FirebaseHandler {
     private static final String postRef="posts";
     private static final String userDepartmentRef="usersdepartmentspair";
 
-
+    /**
+    * Returns key of department in firebase, saves to ref "departments"
+     * @param department department object that you want to save to firebase database1
+    *
+    * */
     public static String pushDepartment(Department department){
         DatabaseReference pushRef = FirebaseDatabase.getInstance().getReference(departmentRef).push();
         pushRef.setValue(department);
@@ -29,6 +33,7 @@ public class FirebaseHandler {
         pushRef.setValue(post);
         return pushRef.getKey();
     }
+
     public static String pushUserDepartmentPair(UserDepartmentPair userDepartmentPair){
         DatabaseReference pushRef = FirebaseDatabase.getInstance().getReference(userDepartmentRef).push();
         pushRef.setValue(userDepartmentPair);
