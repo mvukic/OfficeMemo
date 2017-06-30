@@ -4,8 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/OfficeMemoFinal.iml" filepath="$PROJECT_DIR$/OfficeMemoFinal.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/officememo.iml" filepath="$PROJECT_DIR$/officememo.iml" />
+      <module fileurl="file://C:\Users\shimu\StudioProjects\OfficeMemoFinal\officememo.iml" filepath="C:\Users\shimu\StudioProjects\OfficeMemoFinal\officememo.iml" />
     </modules>
   </component>
 </project>
