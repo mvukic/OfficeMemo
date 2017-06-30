@@ -88,7 +88,7 @@ public class NewPostActivity extends AppCompatActivity implements IPickResult {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_post);
-        //initialize
+
 
         spinner = (Spinner) findViewById(R.id.spinnerDepartments);
         adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, listOfDepartment.getList());
@@ -99,7 +99,6 @@ public class NewPostActivity extends AppCompatActivity implements IPickResult {
         selectImage = (ImageView) findViewById(R.id.imageViewImage);
         selectedImage = (ImageView) findViewById(R.id.imageView);
         addListeners();
-
     }
 
 

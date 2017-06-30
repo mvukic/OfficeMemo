@@ -8,4 +8,8 @@
     <string name="empty_content">Content can\'t be empty</string>
     <string name="empty_title">Tile can\'t be empty</string>
     <string name="not_found">Nothing was found</string>
+    <string name="empty_fname">Name required</string>
+    <string name="empty_lname">Name required</string>
+    <string name="empty_about">Description required</string>
+    <string name="empty_email">Email required</string>
 </resources>

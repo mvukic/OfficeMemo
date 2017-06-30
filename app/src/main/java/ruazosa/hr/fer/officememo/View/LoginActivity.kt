@@ -89,7 +89,7 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
 
     fun signout(){
         mAuth?.signOut();
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient)
     }
 
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount?) {
