@@ -94,25 +94,25 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
 
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount?) {
         val credential = GoogleAuthProvider.getCredential(acct?.idToken, null)
-        mAuth?.signInWithCredential(credential)?.addOnCompleteListener(this, { task ->
-                    if (task.isSuccessful) {
-                        val user = mAuth?.currentUser
-                        indefProgress.show()
-                        val ref: DatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(user?.uid)
-                        ref.data().compose(bindToLifecycle())
-                                .subscribe({
-                                    indefProgress.dismiss()
-                                    if (it.exists()) startActivity<MainActivity>()
-                                    else startActivity<LoginAdditionalActivity>()
-                                    finish()
-                                }) {
-                                    println("Error")
-                                }
-                    } else {
-                        indefProgress.hide()
-                        Snackbar.make(this.currentFocus,"Authentication failed.", Snackbar.LENGTH_SHORT).show()
-                    }
-                })
+        mAuth?.signInWithCredential(credential)?.addOnCompleteListener(this){ task ->
+            if (task.isSuccessful) {
+                val user = mAuth?.currentUser
+                indefProgress.show()
+                val ref: DatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(user?.uid)
+                ref.data().compose(bindToLifecycle())
+                        .subscribe({
+                            indefProgress.dismiss()
+                            if (it.exists()) startActivity<MainActivity>()
+                            else startActivity<LoginAdditionalActivity>()
+                            finish()
+                        }) {
+                            println("Error")
+                        }
+            } else {
+                indefProgress.hide()
+                Snackbar.make(this.currentFocus,"Authentication failed.", Snackbar.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onConnectionFailed(result: ConnectionResult) {
@@ -128,7 +128,7 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
                 val account = result.signInAccount
                 firebaseAuthWithGoogle(account)
             } else {
-
+                Snackbar.make(this.currentFocus,"Authentication failed.", Snackbar.LENGTH_SHORT).show()
             }
         }
     }
