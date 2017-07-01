@@ -30,6 +30,7 @@ class SubscriptionViewHolder extends RecyclerView.ViewHolder{
     CompoundButton toggle;
     SubscriptionAdapter adapter;
     ImageView profile;
+    View deli;
     public SubscriptionViewHolder(Context context,View itemView, SubscriptionAdapter adapter) {
         super(itemView);
         this.context = context;
@@ -37,6 +38,7 @@ class SubscriptionViewHolder extends RecyclerView.ViewHolder{
         name = (TextView) itemView.findViewById(R.id.textViewSubscription);
         toggle = (CompoundButton) itemView.findViewById(R.id.switchSubscription);
         profile = (ImageView) itemView.findViewById(R.id.imageViewSubscription);
+        deli = itemView.findViewById(R.id.viewSubscription);
         RxCompoundButton.checkedChanges(toggle).subscribe(aBoolean -> {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(OfficeMemo.getUserUid());
             RxFirebaseDatabase.observeSingleValueEvent(ref, DataSnapshotMapper.of(User.class))

@@ -43,6 +43,10 @@ public class SubscriptionAdapter extends RecyclerView.Adapter<SubscriptionViewHo
         Department department = listOfDepartments.get(position);
         holder.name.setText(department.toString());
         OfficeMemo.setImageToViewFullCircle(context, holder.profile, Uri.parse(department.getImageUrl()), 250,250);
+        if(position == listOfDepartments.size()-1)
+            holder.deli.setVisibility(View.INVISIBLE);
+        else
+            holder.deli.setVisibility(View.VISIBLE);
         RxFirebaseDatabase.observeSingleValueEvent(FirebaseDatabase.getInstance().getReference("users")
                 .child(OfficeMemo.getUserUid()), DataSnapshotMapper.of(User.class)).subscribe(user -> {
                     holder.toggle.setChecked(user.getSubscriptions().contains(department.getDid()));
