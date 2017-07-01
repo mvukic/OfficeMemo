@@ -104,7 +104,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
-                app:srcCompat="@drawable/common_full_open_on_phone"
+                app:srcCompat="@drawable/gallery"
                 app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
                 android:layout_marginTop="32dp" />
 

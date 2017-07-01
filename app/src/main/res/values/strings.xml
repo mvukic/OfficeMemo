@@ -24,4 +24,5 @@
     <string name="auto_tag_image">Auto tag image</string>
     <string name="pick_a_profile_picture">Pick a profile picture</string>
     <string name="pick_cover_picture">Pick a cover picture</string>
+    <string name="removed_image">Image was removed</string>
 </resources>

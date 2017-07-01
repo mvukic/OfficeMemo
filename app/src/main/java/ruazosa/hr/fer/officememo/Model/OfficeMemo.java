@@ -15,30 +15,35 @@ import com.squareup.picasso.Picasso;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by shimu on 30.6.2017..
  */
 
-public class OfficeMemo {
+public  class OfficeMemo {
 
 
-    public static final SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
+    private static final SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.GERMANY);
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd", Locale.GERMANY);
 
 
     public static String dateToString(Date date){
         return dateFormat.format(date);
     }
+
     public static String timeStampToString(Date timeStamp){
         return timeStampFormat.format(timeStamp);
     }
+
     public static Date getDateFromString(String date) throws ParseException {
         return dateFormat.parse(date);
     }
+
     public static Date getTimeStampFromString(String timeStamp) throws ParseException {
         return timeStampFormat.parse(timeStamp);
     }
+
     public static String getUserUid(){
         return FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
@@ -63,6 +68,7 @@ public class OfficeMemo {
                     }
                 });
     }
+
     public static void setImageToView(Context context, ImageView view, Uri image) {
         Picasso.with(context)
                 .load(image)

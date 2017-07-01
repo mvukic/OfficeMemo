@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -15,12 +16,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.jakewharton.rxbinding2.support.design.widget.RxTextInputLayout;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import ruazosa.hr.fer.officememo.Model.Department;
+import ruazosa.hr.fer.officememo.Model.FirebaseHandler;
 import ruazosa.hr.fer.officememo.Model.OfficeMemo;
 import ruazosa.hr.fer.officememo.R;
 
@@ -31,6 +35,7 @@ public class NewDepartmentActivity extends AppCompatActivity {
     ImageView profile, cover, pickProfile, pickCover;
     Uri currentProfile, currentCover;
     Button create;
+    Department newDepartment = new Department();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +111,38 @@ public class NewDepartmentActivity extends AppCompatActivity {
                 about.setError(null);
         });
 
+        RxView.clicks(create).subscribe(o -> {
+            if(!checkValuesOfDepartment()){
+                Snackbar.make(getCurrentFocus(), R.string.check_your_values, Snackbar.LENGTH_LONG).show();
+                return;
+            }
+            newDepartment.setName(name.getText().toString());
+            newDepartment.setShortName(shortName.getText().toString());
+            newDepartment.setAbout(about.getText().toString());
+            newDepartment.setLocation(location.getText().toString());
+            FirebaseHandler.pushDepartment(newDepartment, currentProfile, currentCover);
+            finish();
+        });
+
+        RxView.longClicks(profile).subscribe(o -> {
+            profile.setImageResource(R.drawable.gallery);
+            currentProfile=null;
+            Snackbar.make(getCurrentFocus(), R.string.removed_image, Snackbar.LENGTH_SHORT).show();
+
+        });
+
+        RxView.longClicks(cover).subscribe(o -> {
+            cover.setImageResource(R.drawable.gallery);
+            currentCover=null;
+            Snackbar.make(getCurrentFocus(), R.string.removed_image, Snackbar.LENGTH_SHORT).show();
+
+        });
+    }
+
+    private boolean checkValuesOfDepartment(){
+        return !(name.getText().toString().isEmpty() || shortName.getText().toString().isEmpty()
+                || about.getText().toString().isEmpty() || location.getText().toString().isEmpty()
+                || currentCover == null || currentProfile == null);
     }
 
     @Override
@@ -125,8 +162,6 @@ public class NewDepartmentActivity extends AppCompatActivity {
         }
     }
 
-
-
     private void instanceAllComponents() {
         name = (TextInputEditText) findViewById(R.id.editTextNameDepartment);
         shortName = (TextInputEditText) findViewById(R.id.editTextShortNameDepartment);
@@ -136,5 +171,6 @@ public class NewDepartmentActivity extends AppCompatActivity {
         cover = (ImageView) findViewById(R.id.imageViewCoverDepartment);
         pickProfile = (ImageView) findViewById(R.id.imageViewProfilePickerDepartment);
         pickCover = (ImageView) findViewById(R.id.imageViewCoverPickerDepartment);
+        create = (Button) findViewById(R.id.buttonCreateDepartment);
     }
 }

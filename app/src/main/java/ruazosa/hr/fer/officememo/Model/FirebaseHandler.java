@@ -1,5 +1,7 @@
 package ruazosa.hr.fer.officememo.Model;
 
+import android.net.Uri;
+
 import com.github.b3er.rxfirebase.database.RxFirebaseDatabase;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -25,9 +27,13 @@ public class FirebaseHandler {
     * Returns key of department in firebase, saves to ref "departments"
      * @param department department object that you want to save to firebase database1
     *
-    * */
-    public static String pushDepartment(Department department){
+    * @param currentProfile Uri of profile picture
+     * @param currentCover Uri of cover picture*/
+    public static String pushDepartment(Department department, Uri currentProfile, Uri currentCover){
         DatabaseReference pushRef = FirebaseDatabase.getInstance().getReference(departmentRef).push();
+        department.setDid(pushRef.getKey());
+        department.setCoverUrl("oover.url");
+        department.setImageUrl("porfile-url");
         pushRef.setValue(department);
         return pushRef.getKey();
     }
@@ -49,8 +55,8 @@ public class FirebaseHandler {
      * Returns key of post in firebase, saves to ref "posts"
      * @param post post object that you want to save to firebase database1
      *
-     * */
-    public static String pushPost(Post post){
+     * @param currentImageUri*/
+    public static String pushPost(Post post, Uri currentImageUri){
         DatabaseReference pushRef = FirebaseDatabase.getInstance().getReference(postRef).push();
         pushRef.setValue(post);
         return pushRef.getKey();
@@ -59,6 +65,12 @@ public class FirebaseHandler {
     public static String pushUserDepartmentPair(UserDepartmentPair userDepartmentPair){
         DatabaseReference pushRef = FirebaseDatabase.getInstance().getReference(userDepartmentRef).push();
         pushRef.setValue(userDepartmentPair);
+        return pushRef.getKey();
+    }
+
+    public static String pushPost(Post newPost) {
+        DatabaseReference pushRef = FirebaseDatabase.getInstance().getReference(postRef).push();
+        pushRef.setValue(newPost);
         return pushRef.getKey();
     }
 }

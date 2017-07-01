@@ -8,6 +8,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -94,6 +95,7 @@ public class NewPostActivity extends AppCompatActivity {//implements IPickResult
     TextView locationText;
     ImageView locationImage;
     ProgressDialog dialog;
+    Uri currentImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,9 +111,9 @@ public class NewPostActivity extends AppCompatActivity {//implements IPickResult
         selectImage = (ImageView) findViewById(R.id.imageViewImage);
         selectedImage = (ImageView) findViewById(R.id.imageView);
         labelImage = (ImageView) findViewById(R.id.imageViewLabel);
-        locationTag = (ImageView)findViewById(R.id.imageViewLocation);
-        locationText = (TextView)findViewById(R.id.textViewLocation);
-        locationImage = (ImageView)findViewById(R.id.locationImageView);
+        locationTag = (ImageView) findViewById(R.id.imageViewLocation);
+        locationText = (TextView) findViewById(R.id.textViewLocation);
+        locationImage = (ImageView) findViewById(R.id.locationImageView);
 
         addListeners();
 
@@ -140,18 +142,21 @@ public class NewPostActivity extends AppCompatActivity {//implements IPickResult
                 newPost.setDid("");
             }
         });
+
         RxTextView.textChanges(title).subscribe(charSequence -> {
             if (charSequence.toString().isEmpty()) {
                 title.setError(getString(R.string.empty_title));
             } else
                 title.setError(null);
         });
+
         RxTextView.textChanges(content).subscribe(charSequence -> {
             if (charSequence.toString().isEmpty()) {
                 content.setError(getString(R.string.empty_content));
             } else
                 content.setError(null);
         });
+
         RxView.clicks(postButton).subscribe(o -> {
             if (newPost.getDid().isEmpty() || title.getText().toString().isEmpty() || content.getText().toString().isEmpty()) {
                 Snackbar.make(getCurrentFocus(), R.string.check_your_values, Snackbar.LENGTH_LONG).show();
@@ -161,22 +166,29 @@ public class NewPostActivity extends AppCompatActivity {//implements IPickResult
                 newPost.setTitle(title.getText().toString());
                 newPost.setUid("sdfasd4");
                 newPost.setTimeStamp(OfficeMemo.timeStampToString(new Date()));
-
-                FirebaseHandler.pushPost(newPost);
+                if (currentImageUri == null)
+                    FirebaseHandler.pushPost(newPost);
+                else
+                    FirebaseHandler.pushPost(newPost, currentImageUri);
+                finish();
             }
         });
+
         RxView.longClicks(selectImage).subscribe(o -> {
             Toast.makeText(this, selectImage.getContentDescription().toString()
                     , Toast.LENGTH_SHORT).show();
         });
+
         RxView.longClicks(locationTag).subscribe(o -> {
             Toast.makeText(this, locationTag.getContentDescription().toString()
                     , Toast.LENGTH_SHORT).show();
         });
+
         RxView.longClicks(labelImage).subscribe(o -> {
             Toast.makeText(this, labelImage.getContentDescription().toString()
                     , Toast.LENGTH_SHORT).show();
         });
+
         RxView.clicks(selectImage).subscribe(o -> {
             Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
             getIntent.setType("image/*");
@@ -184,45 +196,29 @@ public class NewPostActivity extends AppCompatActivity {//implements IPickResult
             Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             pickIntent.setType("image/*");
 
-//            Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//
             Intent chooserIntent = Intent.createChooser(getIntent, "Select Image");
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
 
 
             startActivityForResult(chooserIntent, GALLER_CODE);
 
-//            PickImageDialog.build(new PickSetup()
-//                    .setCancelText("Cancel")
-//                    .setFlip(true)
-//                    .setMaxSize(500).setSystemDialog(true).setButtonOrientation(LinearLayoutCompat.VERTICAL)
-//                    .setPickTypes( EPickType.GALLERY).setGalleryButtonText("Choose from gallery"))
-//                    .setOnPickResult(pickResult -> {
-//                        Picasso.with(this)
-//                                .load(pickResult.getUri())
-//                                .resize(selectedImage.getMaxWidth(), 800).centerInside()
-//                                .into(selectedImage);
-//                        currentBitMap = pickResult.getBitmap();
-
-//                    })
-//                    .show(this);
-
-
         });
 
         RxView.clicks(labelImage).subscribe(o -> {
-            if(currentBitMap!=null) {
-                 dialog = ProgressDialog.show(NewPostActivity.this, "",
+            if (currentBitMap != null) {
+                dialog = ProgressDialog.show(NewPostActivity.this, "",
                         "Classifying your image. Doing lots of dark magic. Please wait...", true);
                 getImageDescription(currentBitMap);
             }
         });
 
-        RxView.longClicks(selectedImage).subscribe(o ->   {
-           currentBitMap=null;
-           selectedImage.setImageBitmap(null);
-           Snackbar.make(getCurrentFocus(), "Image was removed", Snackbar.LENGTH_SHORT).show();
+        RxView.longClicks(selectedImage).subscribe(o -> {
+            currentBitMap = null;
+            currentImageUri = null;
+            selectedImage.setImageResource(R.drawable.gallery);
+            Snackbar.make(getCurrentFocus(), R.string.removed_image, Snackbar.LENGTH_SHORT).show();
         });
+
         RxView.clicks(locationTag).subscribe(o -> {
             PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
             try {
@@ -233,6 +229,7 @@ public class NewPostActivity extends AppCompatActivity {//implements IPickResult
                 e.printStackTrace();
             }
         });
+
         RxView.longClicks(locationText).subscribe(o -> {
             locationText.setVisibility(View.GONE);
             locationImage.setVisibility(View.GONE);
@@ -243,38 +240,24 @@ public class NewPostActivity extends AppCompatActivity {//implements IPickResult
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == PLACE_REQUEST_CODE && resultCode == Activity.RESULT_OK){
+        if (requestCode == PLACE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             Place place = PlacePicker.getPlace(data, this);
             newPost.setLocation(place.getAddress().toString());
             locationText.setText(place.getAddress().toString());
             locationText.setVisibility(View.VISIBLE);
             locationImage.setVisibility(View.VISIBLE);
-        }
-        else if(requestCode == GALLER_CODE && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == GALLER_CODE && resultCode == Activity.RESULT_OK) {
             selectedImage.setImageURI(data.getData());
-            Picasso.with(this)
-                .load(data.getData())
-                .resize(selectedImage.getMaxWidth(), 800).centerInside()
-                .into(selectedImage);
+            currentImageUri = data.getData();
+            OfficeMemo.setImageToView(this, selectedImage, currentImageUri);
             try {
-                currentBitMap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),data.getData());
+                currentBitMap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
     }
-
-//    @Override
-//    public void onPickResult(PickResult pickResult) {
-//        Picasso.with(this)
-//                .load(pickResult.getUri())
-//                .resize(selectedImage.getMaxWidth(), 800).centerInside()
-//                .into(selectedImage);
-//        currentBitMap = pickResult.getBitmap();
-//        selectedImage.setImageBitmap(currentBitMap);
-//
-//    }
 
     @SuppressLint("StaticFieldLeak")
     private void getImageDescription(Bitmap bitmap) {
@@ -342,7 +325,7 @@ public class NewPostActivity extends AppCompatActivity {//implements IPickResult
 
             @Override
             protected void onPostExecute(String s) {
-                content.setText(content.getText().toString()  + "\n" + s);
+                content.setText(content.getText().toString() + "\n" + s);
                 dialog.dismiss();
             }
         }.execute();
@@ -364,7 +347,6 @@ public class NewPostActivity extends AppCompatActivity {//implements IPickResult
         return message.toString();
     }
 
-
     public Image getBase64EncodedJpeg(Bitmap bitmap) {
         Image image = new Image();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -373,7 +355,6 @@ public class NewPostActivity extends AppCompatActivity {//implements IPickResult
         image.encodeContent(imageBytes);
         return image;
     }
-
 
     public static String getSignature(@NonNull PackageManager pm, @NonNull String packageName) {
         try {
