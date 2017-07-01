@@ -1,7 +1,15 @@
 package ruazosa.hr.fer.officememo.Model;
 
+import com.github.b3er.rxfirebase.database.RxFirebaseDatabase;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import io.reactivex.Completable;
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleOnSubscribe;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by shimu on 29.6.2017..
@@ -23,11 +31,20 @@ public class FirebaseHandler {
         pushRef.setValue(department);
         return pushRef.getKey();
     }
-    public static String pushUser(User user){
-        DatabaseReference pushRef = FirebaseDatabase.getInstance().getReference(userRef).push();
-        pushRef.setValue(user);
-        return pushRef.getKey();
+
+    /**
+     * Returns user key after writing details to database.
+     * @param user
+     * @return Single<String>
+     */
+    public static Single<String> pushUser(User user){
+        return Single.create(e -> {
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference(userRef).child(user.getUid());
+            ref.setValue(user);
+            e.onSuccess(user.getUid());
+        });
     }
+
     /**
      * Returns key of post in firebase, saves to ref "posts"
      * @param post post object that you want to save to firebase database1

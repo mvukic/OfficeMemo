@@ -7,18 +7,26 @@ import android.support.design.widget.Snackbar
 import android.widget.EditText
 import com.github.b3er.rxfirebase.auth.rxGetCurrentUser
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.iid.FirebaseInstanceId
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.view.enabled
 import com.jakewharton.rxbinding2.widget.textChanges
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import io.reactivex.Observable
+import io.reactivex.SingleObserver
 import io.reactivex.rxkotlin.Observables
 import org.jetbrains.anko.indeterminateProgressDialog
+import ruazosa.hr.fer.officememo.Model.FirebaseHandler
+import ruazosa.hr.fer.officememo.Model.User
 import ruazosa.hr.fer.officememo.R
+import java.util.*
 
 class LoginAdditionalActivity : RxAppCompatActivity() {
+
+    lateinit var user:FirebaseUser
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,17 +41,36 @@ class LoginAdditionalActivity : RxAppCompatActivity() {
         val emailInput = findViewById(R.id.editTextUserEmail) as EditText
 
         fab.clicks().compose(bindToLifecycle()).subscribe({
-            Snackbar.make(window.decorView,"Saved",Snackbar.LENGTH_SHORT).show()
+            val u = User(
+                    uid = user.uid,
+                    aboutMe = lastNameInput.text.toString(),
+                    coverUrl = "",
+                    email = emailInput.text.toString(),
+                    name = firstNameInput.text.toString(),
+                    lastName = lastNameInput.text.toString(),
+                    dateOfRegistration = Date().toString(),
+                    dateOfBirth = Date().toString(),
+                    token = FirebaseInstanceId.getInstance().getToken().toString(),
+                    location = "",
+                    profileUrl = user.photoUrl.toString()
+            )
+            FirebaseHandler.pushUser(u).compose(bindToLifecycle()).subscribe({key->
+                println("Key is: ${key}")
+                Snackbar.make(window.decorView,"Saved user ${user.displayName}",Snackbar.LENGTH_SHORT).show()
+            },{
+                Snackbar.make(window.decorView,"Error happened.",Snackbar.LENGTH_SHORT).show()
+            })
         })
 
         FirebaseAuth.getInstance().rxGetCurrentUser().compose(bindToLifecycle())
                 .subscribe({
+                    user = it
                     firstNameInput.setText(it.displayName)
                     lastNameInput.setText(it.displayName)
                     emailInput.setText(it.email)
                     indefProgress.hide()
                 },{error->
-                    FirebaseCrash.log("LoginAdditionActivity: ")
+                    FirebaseCrash.log("LoginAdditionActivity: Error getting current user from firebase.")
                 })
 
         val zipped = Observables.combineLatest(firstNameInput.textChanges(),
