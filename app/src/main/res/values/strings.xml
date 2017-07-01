@@ -24,5 +24,10 @@
     <string name="auto_tag_image">Auto tag image</string>
     <string name="pick_a_profile_picture">Pick a profile picture</string>
     <string name="pick_cover_picture">Pick a cover picture</string>
+    <string name="about_user_input">About</string>
+    <string name="email_user_input">Contact email</string>
+    <string name="save">SAVE</string>
+    <string name="location">Location</string>
+    <string name="empty_location">Location required</string>
     <string name="removed_image">Image was removed</string>
 </resources>

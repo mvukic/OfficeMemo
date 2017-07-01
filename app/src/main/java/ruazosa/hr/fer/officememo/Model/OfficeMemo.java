@@ -6,6 +6,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,7 +29,7 @@ public class OfficeMemo {
 
     private static final SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.GERMANY);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd", Locale.GERMANY);
-
+    public static final Uri placeholderImage = Uri.parse("android.resource://ruazosa.hr.fer.officememo/drawable/placeholder");
 
     public static String dateToString(Date date) {
         return dateFormat.format(date);
@@ -73,7 +74,28 @@ public class OfficeMemo {
 
     public static void setImageToView(Context context, ImageView view, Uri image) {
         Picasso.with(context)
-                .load(image)
+                .load(R.drawable.placeholder)
+                .resize(800, 800).centerInside()
+                .into(view, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        Bitmap imageBitmap = ((BitmapDrawable) view.getDrawable()).getBitmap();
+                        RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(context.getResources(), imageBitmap);
+                        imageDrawable.setCircular(true);
+                        imageDrawable.setCornerRadius(50.f);
+                        view.setImageDrawable(imageDrawable);
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+    }
+
+    public static void setImageToView(Context context, ImageView view) {
+        Picasso.with(context)
+                .load(R.drawable.placeholder)
                 .resize(800, 800).centerInside()
                 .into(view, new Callback() {
                     @Override

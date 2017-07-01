@@ -43,7 +43,6 @@ public class NewDepartmentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_department);
         instanceAllComponents();
         addListeners();
-
     }
 
     private void addListeners() {

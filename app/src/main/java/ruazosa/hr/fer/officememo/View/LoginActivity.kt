@@ -68,16 +68,13 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
                 .compose(bindToLifecycle())
                 .subscribe({user->
                     //onSuccess
-                    println("1 "+user.displayName)
                     indefProgress.hide()
                     startActivity<MainActivity>()
                     finish()
                 },{error->
                     //onError
-                    println("2 "+error.message)
                 },{
                     // onComplete
-                    println("User not found.")
                     indefProgress.hide()
                 })
     }
@@ -103,7 +100,7 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
                         .subscribe({
                             indefProgress.dismiss()
                             if (it.exists()) startActivity<MainActivity>()
-                            else startActivity<LoginAdditionalActivity>()
+                            else startActivity<LoginAdditionalActivity>("first_time" to true)
                             finish()
                         }) {
                             println("Error")

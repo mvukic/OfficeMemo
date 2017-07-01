@@ -5,8 +5,11 @@ import android.net.Uri;
 import com.github.b3er.rxfirebase.database.RxFirebaseDatabase;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
-import io.reactivex.Completable;
+import durdinapps.rxfirebase2.RxFirebaseStorage;
+import io.reactivex.Maybe;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
@@ -55,6 +58,16 @@ public class FirebaseHandler {
      * Returns key of post in firebase, saves to ref "posts"
      * @param post post object that you want to save to firebase database1
      *
+     * */
+    public static String pushPost(Post post){
+        DatabaseReference pushRef = FirebaseDatabase.getInstance().getReference(postRef).push();
+        pushRef.setValue(post);
+        return pushRef.getKey();
+    }
+    /**
+     * Returns key of post in firebase, saves to ref "posts"
+     * @param post post object that you want to save to firebase database1
+     *
      * @param currentImageUri*/
     public static String pushPost(Post post, Uri currentImageUri){
         DatabaseReference pushRef = FirebaseDatabase.getInstance().getReference(postRef).push();
@@ -62,9 +75,8 @@ public class FirebaseHandler {
         return pushRef.getKey();
     }
 
-    public static String pushPost(Post newPost) {
-        DatabaseReference pushRef = FirebaseDatabase.getInstance().getReference(postRef).push();
-        pushRef.setValue(newPost);
-        return pushRef.getKey();
+    public static Maybe<UploadTask.TaskSnapshot> pushUriToStorage(Uri uri, StorageReference ref){
+        return RxFirebaseStorage.putFile(ref,uri);
     }
+
 }
