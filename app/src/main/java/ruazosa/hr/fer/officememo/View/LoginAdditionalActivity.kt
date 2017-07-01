@@ -44,7 +44,7 @@ class LoginAdditionalActivity : RxAppCompatActivity(),DatePickerDialog.OnDateSet
     lateinit var currentCover:Uri
     lateinit var imageViewProfile: ImageView
     lateinit var imageViewCover: ImageView
-    lateinit var dob: Date
+    var dob: Date = Date()
     lateinit var indefProgress: ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,7 +107,8 @@ class LoginAdditionalActivity : RxAppCompatActivity(),DatePickerDialog.OnDateSet
                     dateOfBirth = OfficeMemo.dateToString(dob),
                     token = FirebaseInstanceId.getInstance().token.toString(),
                     location = locationInput.text.toString(),
-                    profileUrl = currentProfile.toString()
+                    profileUrl = currentProfile.toString(),
+                    subscriptions = listOf()
             )
             //push cover image
             indefProgress.setMessage("Please wait a bit…")

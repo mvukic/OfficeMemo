@@ -74,7 +74,7 @@ public class OfficeMemo {
 
     public static void setImageToView(Context context, ImageView view, Uri image) {
         Picasso.with(context)
-                .load(R.drawable.placeholder)
+                .load(image)
                 .resize(800, 800).centerInside()
                 .into(view, new Callback() {
                     @Override
