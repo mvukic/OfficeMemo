@@ -60,6 +60,7 @@ dependencies {
     implementation 'com.getbase:floatingactionbutton:1.10.1'
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.github.jrvansuita:PickImage:+'
+    compile 'com.android.support:recyclerview-v7:25.4.0'
 
     compile('com.github.b3er.rxfirebase:firebase-auth:10.21.2') {
         transitive = false

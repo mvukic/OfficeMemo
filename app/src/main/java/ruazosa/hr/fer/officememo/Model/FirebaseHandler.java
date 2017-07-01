@@ -62,12 +62,6 @@ public class FirebaseHandler {
         return pushRef.getKey();
     }
 
-    public static String pushUserDepartmentPair(UserDepartmentPair userDepartmentPair){
-        DatabaseReference pushRef = FirebaseDatabase.getInstance().getReference(userDepartmentRef).push();
-        pushRef.setValue(userDepartmentPair);
-        return pushRef.getKey();
-    }
-
     public static String pushPost(Post newPost) {
         DatabaseReference pushRef = FirebaseDatabase.getInstance().getReference(postRef).push();
         pushRef.setValue(newPost);

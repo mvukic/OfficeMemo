@@ -16,6 +16,7 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import ruazosa.hr.fer.officememo.BaseActivity;
+import ruazosa.hr.fer.officememo.Controller.SubscriptionAdapter;
 import ruazosa.hr.fer.officememo.R;
 
         public class MainActivity extends BaseActivity {
@@ -47,7 +48,9 @@ import ruazosa.hr.fer.officememo.R;
                 .addDrawerItems(
                         new PrimaryDrawerItem().withIdentifier(1).withName("New post"),
                         new PrimaryDrawerItem().withIdentifier(2).withName("Me"),
-                        new PrimaryDrawerItem().withIdentifier(3).withName("New department")
+                        new PrimaryDrawerItem().withIdentifier(3).withName("New department"),
+                        new PrimaryDrawerItem().withIdentifier(4).withName("Subscriptions")
+
                 )
                 .withOnDrawerItemClickListener((view, position, drawerItem) -> {
                     switch((int)drawerItem.getIdentifier()){
@@ -59,6 +62,10 @@ import ruazosa.hr.fer.officememo.R;
                             return false;
                         case 3:
                             startActivity(new Intent(this, NewDepartmentActivity.class));
+                            return false;
+                        case 4:
+                            startActivity(new Intent(this, DepartmentSubscriptionActivity.class));
+                            return false;
                         default:
                             break;
                     }

@@ -39,7 +39,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDoS9HvPRusZSJ3AyT42I_JfBFEmMLatOU" />
 
-        <activity android:name=".View.NewDepartmentActivity"></activity>
+        <activity android:name=".View.NewDepartmentActivity" />
+        <activity android:name=".View.DepartmentSubscriptionActivity"></activity>
     </application>
 
 </manifest>

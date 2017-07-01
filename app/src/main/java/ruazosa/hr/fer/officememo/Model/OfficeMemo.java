@@ -17,22 +17,24 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import ruazosa.hr.fer.officememo.R;
+
 /**
  * Created by shimu on 30.6.2017..
  */
 
-public  class OfficeMemo {
+public class OfficeMemo {
 
 
     private static final SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.GERMANY);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd", Locale.GERMANY);
 
 
-    public static String dateToString(Date date){
+    public static String dateToString(Date date) {
         return dateFormat.format(date);
     }
 
-    public static String timeStampToString(Date timeStamp){
+    public static String timeStampToString(Date timeStamp) {
         return timeStampFormat.format(timeStamp);
     }
 
@@ -44,11 +46,11 @@ public  class OfficeMemo {
         return timeStampFormat.parse(timeStamp);
     }
 
-    public static String getUserUid(){
+    public static String getUserUid() {
         return FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
-    public static void setImageToView(Context context, ImageView view, Uri image,int targetWith , int targetHeight) {
+    public static void setImageToView(Context context, ImageView view, Uri image, int targetWith, int targetHeight) {
         Picasso.with(context)
                 .load(image)
                 .resize(targetWith, targetHeight).centerInside()
@@ -90,6 +92,48 @@ public  class OfficeMemo {
                 });
     }
 
+    public static void setImageToViewFullCircle(Context context, ImageView view, Uri image, int targetWith, int targetHeight) {
+        Picasso.with(context)
+                .load(image)
+                .resize(targetWith, targetHeight)
+                .centerInside()
+                .placeholder(R.drawable.progress_animation)
+                .into(view, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        Bitmap imageBitmap = ((BitmapDrawable) view.getDrawable()).getBitmap();
+                        RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(context.getResources(), imageBitmap);
+                        imageDrawable.setCircular(true);
+                        imageDrawable.setCornerRadius(Math.max(view.getMaxWidth(), view.getMaxHeight()) / 2.f);
+                        view.setImageDrawable(imageDrawable);
+                    }
+
+                    @Override
+                    public void onError() {
+                        Picasso.with(context)
+                                .load(R.drawable.placeholder)
+                                .resize(targetWith, targetHeight)
+                                .centerInside()
+                                .into(view, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Bitmap imageBitmap = ((BitmapDrawable) view.getDrawable()).getBitmap();
+                                        RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(context.getResources(), imageBitmap);
+                                        imageDrawable.setCircular(true);
+                                        imageDrawable.setCornerRadius(Math.max(view.getMaxWidth(), view.getMaxHeight()) / 2.f);
+                                        view.setImageDrawable(imageDrawable);
+                                    }
+
+                                    @Override
+                                    public void onError() {
+
+                                    }
+                                });
+
+
+                    }
+                });
+    }
 
 
 }
