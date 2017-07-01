@@ -18,10 +18,10 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import ruazosa.hr.fer.officememo.BaseActivity;
 import ruazosa.hr.fer.officememo.R;
 
-public class MainActivity extends BaseActivity {
+        public class MainActivity extends BaseActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+            @Override
+            protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -45,8 +45,9 @@ public class MainActivity extends BaseActivity {
                 .withActivity(this)
                 .withAccountHeader(headerResult)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withIdentifier(1).withName("Test1"),
-                        new PrimaryDrawerItem().withIdentifier(2).withName("Test2")
+                        new PrimaryDrawerItem().withIdentifier(1).withName("New post"),
+                        new PrimaryDrawerItem().withIdentifier(2).withName("Me"),
+                        new PrimaryDrawerItem().withIdentifier(3).withName("New department")
                 )
                 .withOnDrawerItemClickListener((view, position, drawerItem) -> {
                     switch((int)drawerItem.getIdentifier()){
@@ -56,6 +57,8 @@ public class MainActivity extends BaseActivity {
                         case 2:
                             startActivity(new Intent(this,LoginAdditionalActivity.class));
                             return false;
+                        case 3:
+                            startActivity(new Intent(this, NewDepartmentActivity.class));
                         default:
                             break;
                     }
