@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="ruazosa.hr.fer.officememo">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -31,7 +33,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".View.LoginAdditionalActivity"></activity>
+        <activity android:name=".View.LoginAdditionalActivity" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDoS9HvPRusZSJ3AyT42I_JfBFEmMLatOU" />
+
+        <activity android:name=".View.NewDepartmentActivity"></activity>
     </application>
 
 </manifest>

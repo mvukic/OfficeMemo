@@ -6,112 +6,180 @@
     android:layout_height="match_parent"
     tools:context="ruazosa.hr.fer.officememo.View.NewPostActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:text="@string/post_to"
-        android:textAppearance="@android:style/TextAppearance.Material.Medium"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/spinnerDepartments"
-        app:layout_constraintBottom_toBottomOf="@+id/spinnerDepartments"
-        android:layout_marginBottom="8dp" />
 
-    <Spinner
-        android:id="@+id/spinnerDepartments"
+    <ScrollView
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp">
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/titleWrapper"
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="32dp"
+                android:text="@string/post_to"
+                android:textAppearance="@android:style/TextAppearance.Material.Medium"
+                app:layout_constraintBottom_toBottomOf="@+id/spinnerDepartments"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/spinnerDepartments" />
+
+            <Spinner
+                android:id="@+id/spinnerDepartments"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="32dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/titleWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:layout_marginRight="32dp"
+                android:layout_marginTop="32dp"
+                app:errorEnabled="true"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/spinnerDepartments">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/editTextTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/your_title"
+                    android:maxLines="2"
+                    android:minLines="1"
+                    android:textAppearance="@android:style/TextAppearance.Material.Large.Inverse" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/textInputLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="32dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:maxLines="4"
+                android:minLines="4"
+                android:textColorHint="@color/colorPrimary"
+                app:errorEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/titleWrapper">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/editTextContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/content_goes_here"
+                    android:maxLines="4"
+                    android:minLines="4"
+                    android:textAppearance="@android:style/TextAppearance.Material.Large.Inverse" />
+            </android.support.design.widget.TextInputLayout>
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginStart="32dp"
+                android:contentDescription="TODO"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/common_full_open_on_phone"
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
+                android:layout_marginTop="32dp" />
+
+            <TextView
+                android:id="@+id/textViewLocation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorAccent"
+                android:layout_marginTop="4dp"
+                android:layout_weight="1"
+                android:text="TextView"
+                android:visibility="invisible"
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
+                app:layout_constraintStart_toEndOf="@+id/locationImageView"
+                android:layout_marginStart="8dp" />
+
+            <ImageView
+                android:id="@+id/locationImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="0dp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewLocation"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textViewLocation"
+                app:srcCompat="@drawable/ic_location_on_black_18dp" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
+
+    <View
+        android:id="@+id/view3"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_marginTop="32dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:errorEnabled="true"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerDepartments">
-
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/editTextTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/your_title"
-            android:maxLines="2"
-            android:minLines="1"
-            android:textAppearance="@android:style/TextAppearance.Material.Large.Inverse" />
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:maxLines="4"
-        android:minLines="4"
-        android:textColorHint="@color/colorPrimary"
+        android:layout_height="1dp"
+        android:background="@color/colorAccent"
+        app:layout_constraintBottom_toTopOf="@id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleWrapper"
-        app:errorEnabled="true"
-        android:id="@+id/textInputLayout">
-
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/editTextContent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/content_goes_here"
-            android:maxLines="4"
-            android:minLines="4"
-            android:textAppearance="@android:style/TextAppearance.Material.Large.Inverse" />
-    </android.support.design.widget.TextInputLayout>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginTop="8dp"
-        android:background="@color/lightGray"
+        android:background="#eceff1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
-        app:layout_constraintVertical_bias="1.0"
-        android:id="@+id/constraintLayout">
+        app:layout_constraintVertical_bias="1.0">
 
         <ImageView
             android:id="@+id/imageViewImage"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="16dp"
+            android:contentDescription="@string/pick_image"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_insert_photo_grey_800_36dp"
-            android:layout_marginStart="16dp"
-            app:layout_constraintEnd_toStartOf="@+id/imageViewLocation"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintVertical_bias="1.0"
-            app:layout_constraintHorizontal_bias="1.0" />
+            app:srcCompat="@drawable/ic_photo_library_blue_grey_600_36dp" />
 
         <ImageView
             android:id="@+id/imageViewLocation"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            android:contentDescription="@string/pick_location"
             android:layout_marginBottom="0dp"
             android:layout_marginStart="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageViewImage"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_add_location_grey_800_36dp" />
+            app:srcCompat="@drawable/ic_add_location_blue_grey_600_36dp" />
 
         <Button
             android:id="@+id/buttonPost"
@@ -121,25 +189,28 @@
             android:layout_marginBottom="0dp"
             android:layout_marginEnd="8dp"
             android:text="@string/post"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageViewLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:contentDescription="@string/auto_tag_image"
+            android:layout_marginBottom="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageViewLocation"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_label_blue_grey_600_36dp" />
+
     </android.support.constraint.ConstraintLayout>
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
-        app:srcCompat="@drawable/common_full_open_on_phone" />
+
+
 
 
 </android.support.constraint.ConstraintLayout>

@@ -1,20 +1,22 @@
 package ruazosa.hr.fer.officememo.View;
 
-import android.accounts.Account;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,10 +24,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.common.AccountPicker;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.vision.v1.Vision;
@@ -54,26 +60,25 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import durdinapps.rxfirebase2.DataSnapshotMapper;
 import durdinapps.rxfirebase2.RxFirebaseDatabase;
 import ruazosa.hr.fer.officememo.Model.Department;
 import ruazosa.hr.fer.officememo.Model.FirebaseHandler;
 import ruazosa.hr.fer.officememo.Model.ObservableList;
+import ruazosa.hr.fer.officememo.Model.OfficeMemo;
 import ruazosa.hr.fer.officememo.Model.Post;
 import ruazosa.hr.fer.officememo.R;
 
 // TODO: 29.6.2017. add description of image using Google Vision API
-public class NewPostActivity extends AppCompatActivity implements IPickResult {
-    private static final int PICK_IMAGE = 13;
+public class NewPostActivity extends AppCompatActivity {//implements IPickResult {
     private static final String CLOUD_VISION_API_KEY = "AIzaSyCFoJ_GfzlUddBllKTLehvIBSLnZpkEF8E";
-
-    static final int REQUEST_ACCOUNT_AUTHORIZATION = 12;
     private static final String ANDROID_CERT_HEADER = "X-Android-Cert";
     private static final String ANDROID_PACKAGE_HEADER = "X-Android-Package";
-    static final int REQUEST_CODE_PICK_ACCOUNT = 11;
+    private static final int PLACE_REQUEST_CODE = 13;
+    private static final int GALLER_CODE = 17;
     ObservableList<Department> listOfDepartment = new ObservableList<>();
     private Post newPost = new Post();
     Spinner spinner;
@@ -83,13 +88,18 @@ public class NewPostActivity extends AppCompatActivity implements IPickResult {
     TextInputEditText content;
     ImageView selectImage;
     ImageView selectedImage;
+    ImageView locationTag;
+    ImageView labelImage;
+    Bitmap currentBitMap;
+    TextView locationText;
+    ImageView locationImage;
+    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_post);
-
-
+        //initialize
         spinner = (Spinner) findViewById(R.id.spinnerDepartments);
         adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, listOfDepartment.getList());
         spinner.setAdapter(adapter);
@@ -98,7 +108,13 @@ public class NewPostActivity extends AppCompatActivity implements IPickResult {
         content = (TextInputEditText) findViewById(R.id.editTextContent);
         selectImage = (ImageView) findViewById(R.id.imageViewImage);
         selectedImage = (ImageView) findViewById(R.id.imageView);
+        labelImage = (ImageView) findViewById(R.id.imageViewLabel);
+        locationTag = (ImageView)findViewById(R.id.imageViewLocation);
+        locationText = (TextView)findViewById(R.id.textViewLocation);
+        locationImage = (ImageView)findViewById(R.id.locationImageView);
+
         addListeners();
+
     }
 
 
@@ -144,50 +160,121 @@ public class NewPostActivity extends AppCompatActivity implements IPickResult {
                 newPost.setContent(content.getText().toString());
                 newPost.setTitle(title.getText().toString());
                 newPost.setUid("sdfasd4");
-                newPost.setTimeStamp("2017-06-29 22-38");
+                newPost.setTimeStamp(OfficeMemo.timeStampToString(new Date()));
 
                 FirebaseHandler.pushPost(newPost);
-
-
             }
         });
+        RxView.longClicks(selectImage).subscribe(o -> {
+            Toast.makeText(this, selectImage.getContentDescription().toString()
+                    , Toast.LENGTH_SHORT).show();
+        });
+        RxView.longClicks(locationTag).subscribe(o -> {
+            Toast.makeText(this, locationTag.getContentDescription().toString()
+                    , Toast.LENGTH_SHORT).show();
+        });
+        RxView.longClicks(labelImage).subscribe(o -> {
+            Toast.makeText(this, labelImage.getContentDescription().toString()
+                    , Toast.LENGTH_SHORT).show();
+        });
         RxView.clicks(selectImage).subscribe(o -> {
-//            Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
-//            getIntent.setType("image/*");
-//
-//            Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//            pickIntent.setType("image/*");
-//
+            Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            getIntent.setType("image/*");
+
+            Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            pickIntent.setType("image/*");
+
 //            Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 //
-//            Intent chooserIntent = Intent.createChooser(getIntent, "Select Image");
-//            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent, takePicture});
-//
-//
-//            startActivityForResult(chooserIntent, PICK_IMAGE);
+            Intent chooserIntent = Intent.createChooser(getIntent, "Select Image");
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
 
-            PickImageDialog.build(new PickSetup()
-                    .setCancelText("Cancel")
-                    .setFlip(true)
-                    .setMaxSize(500).setSystemDialog(true).setButtonOrientation(LinearLayoutCompat.VERTICAL)
-                    .setPickTypes(EPickType.CAMERA, EPickType.GALLERY).setGalleryButtonText("Choose from gallery")).show(this);
+
+            startActivityForResult(chooserIntent, GALLER_CODE);
+
+//            PickImageDialog.build(new PickSetup()
+//                    .setCancelText("Cancel")
+//                    .setFlip(true)
+//                    .setMaxSize(500).setSystemDialog(true).setButtonOrientation(LinearLayoutCompat.VERTICAL)
+//                    .setPickTypes( EPickType.GALLERY).setGalleryButtonText("Choose from gallery"))
+//                    .setOnPickResult(pickResult -> {
+//                        Picasso.with(this)
+//                                .load(pickResult.getUri())
+//                                .resize(selectedImage.getMaxWidth(), 800).centerInside()
+//                                .into(selectedImage);
+//                        currentBitMap = pickResult.getBitmap();
+
+//                    })
+//                    .show(this);
 
 
         });
 
+        RxView.clicks(labelImage).subscribe(o -> {
+            if(currentBitMap!=null) {
+                 dialog = ProgressDialog.show(NewPostActivity.this, "",
+                        "Classifying your image. Doing lots of dark magic. Please wait...", true);
+                getImageDescription(currentBitMap);
+            }
+        });
 
+        RxView.longClicks(selectedImage).subscribe(o ->   {
+           currentBitMap=null;
+           selectedImage.setImageBitmap(null);
+           Snackbar.make(getCurrentFocus(), "Image was removed", Snackbar.LENGTH_SHORT).show();
+        });
+        RxView.clicks(locationTag).subscribe(o -> {
+            PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
+            try {
+
+                Intent intent = intentBuilder.build(this);
+                startActivityForResult(intent, PLACE_REQUEST_CODE);
+            } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+                e.printStackTrace();
+            }
+        });
+        RxView.longClicks(locationText).subscribe(o -> {
+            locationText.setVisibility(View.GONE);
+            locationImage.setVisibility(View.GONE);
+
+            newPost.setLocation("");
+        });
     }
-
 
     @Override
-    public void onPickResult(PickResult pickResult) {
-        Picasso.with(this)
-                .load(pickResult.getUri())
-                .resize(800, 800).centerInside()
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == PLACE_REQUEST_CODE && resultCode == Activity.RESULT_OK){
+            Place place = PlacePicker.getPlace(data, this);
+            newPost.setLocation(place.getAddress().toString());
+            locationText.setText(place.getAddress().toString());
+            locationText.setVisibility(View.VISIBLE);
+            locationImage.setVisibility(View.VISIBLE);
+        }
+        else if(requestCode == GALLER_CODE && resultCode == Activity.RESULT_OK) {
+            selectedImage.setImageURI(data.getData());
+            Picasso.with(this)
+                .load(data.getData())
+                .resize(selectedImage.getMaxWidth(), 800).centerInside()
                 .into(selectedImage);
+            try {
+                currentBitMap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),data.getData());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
-        getImageDescription(pickResult.getBitmap());
     }
+
+//    @Override
+//    public void onPickResult(PickResult pickResult) {
+//        Picasso.with(this)
+//                .load(pickResult.getUri())
+//                .resize(selectedImage.getMaxWidth(), 800).centerInside()
+//                .into(selectedImage);
+//        currentBitMap = pickResult.getBitmap();
+//        selectedImage.setImageBitmap(currentBitMap);
+//
+//    }
 
     @SuppressLint("StaticFieldLeak")
     private void getImageDescription(Bitmap bitmap) {
@@ -255,7 +342,8 @@ public class NewPostActivity extends AppCompatActivity implements IPickResult {
 
             @Override
             protected void onPostExecute(String s) {
-                content.setText(s);
+                content.setText(content.getText().toString()  + "\n" + s);
+                dialog.dismiss();
             }
         }.execute();
     }

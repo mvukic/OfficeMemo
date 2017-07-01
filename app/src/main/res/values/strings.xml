@@ -12,4 +12,16 @@
     <string name="empty_lname">Name required</string>
     <string name="empty_about">Description required</string>
     <string name="empty_email">Email required</string>
+    <string name="about_department">About department</string>
+    <string name="department_location">Department location</string>
+    <string name="department_short_name">Department short name</string>
+    <string name="department_name">Department name</string>
+    <string name="create">CREATE</string>
+    <string name="profile_picture">Profile picture:</string>
+    <string name="cover_picture">Cover picture:</string>
+    <string name="pick_image">Pick image</string>
+    <string name="pick_location">Pick location</string>
+    <string name="auto_tag_image">Auto tag image</string>
+    <string name="pick_a_profile_picture">Pick a profile picture</string>
+    <string name="pick_cover_picture">Pick a cover picture</string>
 </resources>
