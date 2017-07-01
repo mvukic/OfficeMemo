@@ -21,6 +21,7 @@ import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import ruazosa.hr.fer.officememo.Model.OfficeMemo;
 import ruazosa.hr.fer.officememo.R;
 
 public class NewDepartmentActivity extends AppCompatActivity {
@@ -113,37 +114,18 @@ public class NewDepartmentActivity extends AppCompatActivity {
             Uri image = data.getData();
             switch (requestCode){
                 case PROFILE_CODE:
-                    setImageToView(profile, image);
+                    OfficeMemo.setImageToView(this, profile, image);
                     currentProfile = image;
                     break;
                 case COVER_CODE:
-                    setImageToView(cover, image);
+                    OfficeMemo.setImageToView(this, cover, image);
                     currentCover = image;
                     break;
             }
         }
     }
 
-    private void setImageToView(ImageView view, Uri image) {
-        Picasso.with(this)
-                .load(image)
-                .resize(800, 800).centerInside()
-                .into(view, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        Bitmap imageBitmap = ((BitmapDrawable) view.getDrawable()).getBitmap();
-                        RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(getResources(), imageBitmap);
-                        imageDrawable.setCircular(true);
-                        imageDrawable.setCornerRadius(50.f);
-                        view.setImageDrawable(imageDrawable);
-                    }
 
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-    }
 
     private void instanceAllComponents() {
         name = (TextInputEditText) findViewById(R.id.editTextNameDepartment);
