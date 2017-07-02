@@ -41,7 +41,7 @@ public class MainActivity extends BaseActivity {
                 )
                 .build();
 
-        new DrawerBuilder()
+        Drawer d = new DrawerBuilder()
                 .withToolbar(toolbar)
                 .withActivity(this)
                 .withAccountHeader(headerResult)
@@ -51,7 +51,7 @@ public class MainActivity extends BaseActivity {
                         new PrimaryDrawerItem().withIdentifier(3).withName("New department"),
                         new PrimaryDrawerItem().withIdentifier(4).withName("Subscriptions")
 
-                )
+                ).addStickyDrawerItems(new PrimaryDrawerItem().withIdentifier(5).withName("Sign out"))
                 .withOnDrawerItemClickListener((view, position, drawerItem) -> {
                     switch((int)drawerItem.getIdentifier()){
                         case 1:
@@ -65,6 +65,9 @@ public class MainActivity extends BaseActivity {
                             return false;
                         case 4:
                             startActivity(new Intent(this, DepartmentSubscriptionActivity.class));
+                            return false;
+                        case 5:
+                            signOut(this);
                             return false;
                         default:
                             break;

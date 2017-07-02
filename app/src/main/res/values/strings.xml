@@ -30,4 +30,8 @@
     <string name="location">Location</string>
     <string name="empty_location">Location required</string>
     <string name="removed_image">Image was removed</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="profile_image">Profile image</string>
+    <string name="cover_image">Cover image</string>
 </resources>

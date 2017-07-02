@@ -84,11 +84,6 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    fun signout(){
-        mAuth?.signOut();
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient)
-    }
-
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount?) {
         val credential = GoogleAuthProvider.getCredential(acct?.idToken, null)
         mAuth?.signInWithCredential(credential)?.addOnCompleteListener(this){ task ->

@@ -5,10 +5,8 @@ import android.app.DatePickerDialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
-import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.widget.*
 import com.github.b3er.rxfirebase.auth.rxGetCurrentUser
@@ -20,15 +18,11 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.storage.FirebaseStorage
 import com.jakewharton.rxbinding2.view.clicks
-import com.jakewharton.rxbinding2.view.enabled
 import com.jakewharton.rxbinding2.widget.textChanges
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
-import com.trello.rxlifecycle2.kotlin.bind
-import io.reactivex.Observable
-import io.reactivex.SingleObserver
 import io.reactivex.rxkotlin.Observables
-import kotlinx.android.synthetic.main.activity_new_post.*
 import org.jetbrains.anko.indeterminateProgressDialog
+import org.jetbrains.anko.startActivity
 import ruazosa.hr.fer.officememo.Model.FirebaseHandler
 import ruazosa.hr.fer.officememo.Model.OfficeMemo
 import ruazosa.hr.fer.officememo.Model.User
@@ -45,7 +39,11 @@ class LoginAdditionalActivity : RxAppCompatActivity(),DatePickerDialog.OnDateSet
     lateinit var imageViewProfile: ImageView
     lateinit var imageViewCover: ImageView
     var dob: Date = Date()
+    lateinit var existingUser: User
     lateinit var indefProgress: ProgressDialog
+    var currentProfileUpdated = false
+    var currentCoverUpdated = false
+    var firstTimeOpened = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,15 +60,16 @@ class LoginAdditionalActivity : RxAppCompatActivity(),DatePickerDialog.OnDateSet
         val locationInput = findViewById(R.id.editTextUserLocation) as EditText
         val imageProfileViewButton = findViewById(R.id.imageViewProfileUserPicker) as ImageView
         val imageCoverViewButton = findViewById(R.id.imageViewCoverUserPicker) as ImageView
-        val imageBirthButton = findViewById(R.id.imageViewBirthUserPicker) as ImageView
+//        val imageBirthButton = findViewById(R.id.imageViewBirthUserPicker) as ImageView
+
         imageViewProfile = findViewById(R.id.imageViewProfileUser) as ImageView
         imageViewCover = findViewById(R.id.imageViewCoverUser) as ImageView
-
-        imageBirthButton.clicks().compose(bindToLifecycle())
-                .subscribe({
-                    val datePickerDialog = DatePickerDialog(this, this, 2017, 1, 1)
-                    datePickerDialog.show()
-        })
+        firstTimeOpened = intent.getBooleanExtra("first_time",false)
+//        imageBirthButton.clicks().compose(bindToLifecycle())
+//                .subscribe({
+//                    val datePickerDialog = DatePickerDialog(this, this, 2017, 1, 1)
+//                    datePickerDialog.show()
+//        })
 
 
         imageProfileViewButton.clicks().compose(bindToLifecycle())
@@ -110,34 +109,59 @@ class LoginAdditionalActivity : RxAppCompatActivity(),DatePickerDialog.OnDateSet
                     profileUrl = currentProfile.toString(),
                     subscriptions = listOf()
             )
-            //push cover image
-            indefProgress.setMessage("Please wait a bit…")
+            // Save previous subscriptions
+            if(!firstTimeOpened){
+                u.subscriptions = existingUser.subscriptions
+            }
+            //Push images to storage
             indefProgress.setTitle("Updating profile")
             indefProgress.show()
-            val a1 = FirebaseHandler.pushUriToStorage(
-                    currentProfile,
-                    FirebaseStorage.getInstance().getReference(user.uid).child("profileImage.jpg"))
-                    .toObservable()
-            val a2 = FirebaseHandler.pushUriToStorage(
-                    currentCover,
-                    FirebaseStorage.getInstance().getReference(user.uid).child("coverImage.jpg"))
-                    .toObservable()
-            Observables.zip(a1,a2,{a,b -> listOf(a,b) }).compose(bindToLifecycle())
-                    .subscribe({(profileUriTask,coverUriTask)->
-                        u.coverUrl = coverUriTask.downloadUrl.toString()
-                        u.profileUrl = profileUriTask.downloadUrl.toString()
-                        FirebaseHandler.pushUser(u).compose(bindToLifecycle()).subscribe({key->
-                            indefProgress.hide()
-                            Snackbar.make(window.decorView,"Saved user ${user.displayName}",Snackbar.LENGTH_SHORT).show()
-                        },{
-                            indefProgress.hide()
-                            FirebaseCrash.log("LoginAdditionalActivity: Error when saving user.")
-                            Snackbar.make(window.decorView,"Error happened.",Snackbar.LENGTH_SHORT).show()
+
+            if(firstTimeOpened){
+                currentProfileUpdated = true
+                currentCoverUpdated = true
+            }
+            if(currentProfileUpdated && currentCoverUpdated){
+                val a1 = FirebaseHandler.pushUriToStorage(
+                        currentProfile,
+                        FirebaseStorage.getInstance().getReference(user.uid).child("profileImage.jpg"))
+                        .toObservable()
+
+                val a2 = FirebaseHandler.pushUriToStorage(
+                        currentCover,
+                        FirebaseStorage.getInstance().getReference(user.uid).child("coverImage.jpg"))
+                        .toObservable()
+                Observables.zip(a1,a2,{a,b -> listOf(a,b) }).compose(bindToLifecycle())
+                        .subscribe({(profileUriTask,coverUriTask)->
+                            u.coverUrl = coverUriTask.downloadUrl.toString()
+                            u.profileUrl = profileUriTask.downloadUrl.toString()
+                            saveUser(u)
                         })
-                    })
+            }else if(currentCoverUpdated){
+                FirebaseHandler.pushUriToStorage(
+                        currentCover,
+                        FirebaseStorage.getInstance().getReference(user.uid).child("coverImage.jpg"))
+                        .toObservable().compose(bindToLifecycle()).subscribe({
+                    u.coverUrl = it.downloadUrl.toString()
+                    u.profileUrl = currentProfile.toString()
+                    saveUser(u)
+                })
+            }else if(currentProfileUpdated){
+                FirebaseHandler.pushUriToStorage(
+                        currentProfile,
+                        FirebaseStorage.getInstance().getReference(user.uid).child("profileImage.jpg"))
+                        .toObservable().compose(bindToLifecycle()).subscribe({
+                    u.coverUrl = currentCover.toString()
+                    u.profileUrl = it.downloadUrl.toString()
+                    saveUser(u)
+                })
+            }else{
+                u.coverUrl = currentCover.toString()
+                u.profileUrl = currentProfile.toString()
+                saveUser(u)
+            }
 
         })
-        val firstTimeOpened = intent.getBooleanExtra("first_time",false)
 
         FirebaseAuth.getInstance().rxGetCurrentUser().compose(bindToLifecycle())
                 .subscribe({
@@ -153,11 +177,16 @@ class LoginAdditionalActivity : RxAppCompatActivity(),DatePickerDialog.OnDateSet
                             lastNameInput.setText("")
                         }
                         emailInput.setText(it.email)
-                        OfficeMemo.setImageToView(this, imageViewProfile, it.photoUrl)
+                        currentProfile = OfficeMemo.placeholderImage
+                        currentCover = OfficeMemo.placeholderImage
+                        OfficeMemo.setImageToView(this, imageViewProfile)
+                        OfficeMemo.setImageToView(this,imageViewCover)
+                        indefProgress.hide()
                     }else{
                         val ref = FirebaseDatabase.getInstance().getReference("users").child(it.uid)
                         ref.data().compose(bindToLifecycle()).subscribe({
                             val u = it.getValue(User::class.java)
+                            existingUser =u
                             firstNameInput.setText(u.name)
                             lastNameInput.setText(u.lastName)
                             emailInput.setText(u.email)
@@ -222,6 +251,18 @@ class LoginAdditionalActivity : RxAppCompatActivity(),DatePickerDialog.OnDateSet
 
     }
 
+    fun saveUser(u:User){
+        FirebaseHandler.pushUser(u).compose(bindToLifecycle()).subscribe({key->
+            indefProgress.hide()
+            if(firstTimeOpened) startActivity<MainActivity>()
+            else Snackbar.make(window.decorView,"Saved user ${u.name}",Snackbar.LENGTH_SHORT).show()
+        },{
+            indefProgress.hide()
+            FirebaseCrash.log("LoginAdditionalActivity: Error while saving a user.")
+            Snackbar.make(window.decorView,"Error happened.",Snackbar.LENGTH_SHORT).show()
+        })
+    }
+
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
         val c = Calendar.getInstance()
         c.set(Calendar.YEAR, year)
@@ -241,10 +282,12 @@ class LoginAdditionalActivity : RxAppCompatActivity(),DatePickerDialog.OnDateSet
                 PROFILE_CODE -> {
                     OfficeMemo.setImageToView(this, imageViewProfile, image)
                     currentProfile = image
+                    currentProfileUpdated = true
                 }
                 COVER_CODE -> {
                     OfficeMemo.setImageToView(this, imageViewCover, image)
                     currentCover = image
+                    currentCoverUpdated = true
                 }
             }
         }
