@@ -10,6 +10,7 @@ import android.widget.ToggleButton;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxCheckedTextView;
 import com.jakewharton.rxbinding2.widget.RxCompoundButton;
@@ -43,11 +44,14 @@ class SubscriptionViewHolder extends RecyclerView.ViewHolder{
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(OfficeMemo.getUserUid());
             RxFirebaseDatabase.observeSingleValueEvent(ref, DataSnapshotMapper.of(User.class))
                     .subscribe(user -> {
+                        String did = adapter.getList().get(getAdapterPosition()).getDid();
                         if(aBoolean){
-                            user.getSubscriptions().add(adapter.getList().get(getAdapterPosition()).getDid());
+                            user.getSubscriptions().add(did);
+                            FirebaseMessaging.getInstance().subscribeToTopic(did);
                         }
                         else{
-                            user.getSubscriptions().remove(adapter.getList().get(getAdapterPosition()).getDid());
+                            user.getSubscriptions().remove(did);
+                            FirebaseMessaging.getInstance().unsubscribeFromTopic(did);
                         }
                         ref.setValue(user);
                     });

@@ -49,7 +49,7 @@ public class DepartmentSubscriptionActivity extends AppCompatActivity {
                 DataSnapshotMapper.listOf(Department.class))
                 .subscribe(departments -> {
                     listOfDepartment.clear();
-                    departments.forEach(department -> listOfDepartment.add(department));
+                    listOfDepartment.addAll(departments);
                     adapter.notifyDataSetChanged();
                     dialog.dismiss();
                 });

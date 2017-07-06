@@ -14,4 +14,5 @@ data class Post(
         var timeStamp: String = "",
         var location: String = "",
         var comments: List<Comment> = asList(),
-        var upVotes: Long = 0)
+        var upVotes: Long = 0
+)

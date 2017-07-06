@@ -325,7 +325,8 @@ public class NewPostActivity extends AppCompatActivity {//implements IPickResult
 
             @Override
             protected void onPostExecute(String s) {
-                content.setText(content.getText().toString() + "\n" + s);
+                String temp = content.getText().toString() + "\n" + s;
+                content.setText(temp);
                 dialog.dismiss();
             }
         }.execute();
