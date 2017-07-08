@@ -3,11 +3,8 @@ package ruazosa.hr.fer.officememo.View;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 
 
@@ -17,15 +14,12 @@ import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.picasso.Picasso;
 
 import ruazosa.hr.fer.officememo.BaseActivity;
-import ruazosa.hr.fer.officememo.Controller.GlobalData;
-import ruazosa.hr.fer.officememo.Controller.SubscriptionAdapter;
+import ruazosa.hr.fer.officememo.Utils.GlobalData;
 import ruazosa.hr.fer.officememo.Model.User;
 import ruazosa.hr.fer.officememo.R;
 
@@ -77,12 +71,12 @@ public class MainActivity extends BaseActivity {
                 .withActivity(this)
                 .withAccountHeader(headerResult)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withIdentifier(2).withName("Me"),
+                        new PrimaryDrawerItem().withIdentifier(0).withName("Me"),
                         new PrimaryDrawerItem().withIdentifier(1).withName("New post"),
                         new PrimaryDrawerItem().withIdentifier(3).withName("New department"),
                         new PrimaryDrawerItem().withIdentifier(4).withName("Subscriptions")
-
-                ).addStickyDrawerItems(new PrimaryDrawerItem().withIdentifier(5).withName("Sign out"))
+                )
+                .addStickyDrawerItems(new PrimaryDrawerItem().withIdentifier(5).withName("Sign out"))
                 .withOnDrawerItemClickListener((view, position, drawerItem) -> {
                     switch((int)drawerItem.getIdentifier()){
                         case 1:
@@ -104,7 +98,8 @@ public class MainActivity extends BaseActivity {
                             break;
                     }
                     return true;
-                }).withSelectedItem(-1)
+                })
+                .withSelectedItem(-1)
                 .build();
     }
 

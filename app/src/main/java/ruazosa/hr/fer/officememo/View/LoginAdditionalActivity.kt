@@ -1,7 +1,6 @@
 package ruazosa.hr.fer.officememo.View
 
 import android.app.Activity
-import android.app.DatePickerDialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
@@ -10,11 +9,9 @@ import android.provider.MediaStore
 import android.support.design.widget.Snackbar
 import android.widget.*
 import com.github.b3er.rxfirebase.auth.rxGetCurrentUser
-import com.github.b3er.rxfirebase.database.data
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.crash.FirebaseCrash
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.storage.FirebaseStorage
 import com.jakewharton.rxbinding2.view.clicks
@@ -23,7 +20,7 @@ import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import io.reactivex.rxkotlin.Observables
 import org.jetbrains.anko.indeterminateProgressDialog
 import org.jetbrains.anko.startActivity
-import ruazosa.hr.fer.officememo.Controller.GlobalData
+import ruazosa.hr.fer.officememo.Utils.GlobalData
 import ruazosa.hr.fer.officememo.Model.FirebaseHandler
 import ruazosa.hr.fer.officememo.Model.OfficeMemo
 import ruazosa.hr.fer.officememo.Model.User

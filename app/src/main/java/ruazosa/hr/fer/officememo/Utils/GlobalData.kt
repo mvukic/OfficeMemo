@@ -1,4 +1,4 @@
-package ruazosa.hr.fer.officememo.Controller
+package ruazosa.hr.fer.officememo.Utils
 
 import ruazosa.hr.fer.officememo.Model.User
 
@@ -7,4 +7,5 @@ object GlobalData {
 
     lateinit var user: User
     var hasUser: Boolean = false
+
 }
