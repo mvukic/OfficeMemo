@@ -23,13 +23,14 @@ import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import io.reactivex.rxkotlin.Observables
 import org.jetbrains.anko.indeterminateProgressDialog
 import org.jetbrains.anko.startActivity
+import ruazosa.hr.fer.officememo.Controller.GlobalData
 import ruazosa.hr.fer.officememo.Model.FirebaseHandler
 import ruazosa.hr.fer.officememo.Model.OfficeMemo
 import ruazosa.hr.fer.officememo.Model.User
 import ruazosa.hr.fer.officememo.R
 import java.util.*
 
-class LoginAdditionalActivity : RxAppCompatActivity(),DatePickerDialog.OnDateSetListener {
+class LoginAdditionalActivity : RxAppCompatActivity() {
 
     lateinit var user:FirebaseUser
     private val PROFILE_CODE = 0
@@ -60,16 +61,10 @@ class LoginAdditionalActivity : RxAppCompatActivity(),DatePickerDialog.OnDateSet
         val locationInput = findViewById(R.id.editTextUserLocation) as EditText
         val imageProfileViewButton = findViewById(R.id.imageViewProfileUserPicker) as ImageView
         val imageCoverViewButton = findViewById(R.id.imageViewCoverUserPicker) as ImageView
-//        val imageBirthButton = findViewById(R.id.imageViewBirthUserPicker) as ImageView
 
         imageViewProfile = findViewById(R.id.imageViewProfileUser) as ImageView
         imageViewCover = findViewById(R.id.imageViewCoverUser) as ImageView
         firstTimeOpened = intent.getBooleanExtra("first_time",false)
-//        imageBirthButton.clicks().compose(bindToLifecycle())
-//                .subscribe({
-//                    val datePickerDialog = DatePickerDialog(this, this, 2017, 1, 1)
-//                    datePickerDialog.show()
-//        })
 
 
         imageProfileViewButton.clicks().compose(bindToLifecycle())
@@ -184,9 +179,10 @@ class LoginAdditionalActivity : RxAppCompatActivity(),DatePickerDialog.OnDateSet
                         indefProgress.hide()
                     }else{
                         val ref = FirebaseDatabase.getInstance().getReference("users").child(it.uid)
-                        ref.data().compose(bindToLifecycle()).subscribe({
-                            val u = it.getValue(User::class.java)
-                            existingUser =u
+//                        ref.data().compose(bindToLifecycle()).subscribe({
+//                            val u = it.getValue(User::class.java)
+                            val u = GlobalData.user
+                            existingUser = u
                             firstNameInput.setText(u.name)
                             lastNameInput.setText(u.lastName)
                             emailInput.setText(u.email)
@@ -205,10 +201,10 @@ class LoginAdditionalActivity : RxAppCompatActivity(),DatePickerDialog.OnDateSet
                             OfficeMemo.setImageToView(this,imageViewProfile, currentProfile)
                             OfficeMemo.setImageToView(this,imageViewCover, currentCover)
                             indefProgress.hide()
-                        },{
-                            FirebaseCrash.log("LoginAdditionActivity: Error getting user from database.")
-                            indefProgress.hide()
-                        })
+//                        },{
+//                            FirebaseCrash.log("LoginAdditionActivity: Error getting user from database.")
+//                            indefProgress.hide()
+//                        })
                     }
                 },{error->
                     FirebaseCrash.log("LoginAdditionActivity: Error getting current user from firebase.")
@@ -256,23 +252,13 @@ class LoginAdditionalActivity : RxAppCompatActivity(),DatePickerDialog.OnDateSet
             indefProgress.hide()
             if(firstTimeOpened) startActivity<MainActivity>()
             else Snackbar.make(window.decorView,"Saved user ${u.name}",Snackbar.LENGTH_SHORT).show()
+            GlobalData.user = u
+            GlobalData.hasUser = true
         },{
             indefProgress.hide()
             FirebaseCrash.log("LoginAdditionalActivity: Error while saving a user.")
             Snackbar.make(window.decorView,"Error happened.",Snackbar.LENGTH_SHORT).show()
         })
-    }
-
-    override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        val c = Calendar.getInstance()
-        c.set(Calendar.YEAR, year)
-        c.set(Calendar.MONTH, month)
-        c.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-        c.set(Calendar.HOUR_OF_DAY,0)
-        c.set(Calendar.MINUTE,0)
-        c.set(Calendar.SECOND,0)
-        dob = c.time
-        println(dob)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {

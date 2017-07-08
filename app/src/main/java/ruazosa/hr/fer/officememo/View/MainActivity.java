@@ -1,10 +1,14 @@
 package ruazosa.hr.fer.officememo.View;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -14,12 +18,19 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
+import com.mikepenz.materialdrawer.util.DrawerImageLoader;
+import com.squareup.picasso.Picasso;
 
 import ruazosa.hr.fer.officememo.BaseActivity;
+import ruazosa.hr.fer.officememo.Controller.GlobalData;
 import ruazosa.hr.fer.officememo.Controller.SubscriptionAdapter;
+import ruazosa.hr.fer.officememo.Model.User;
 import ruazosa.hr.fer.officememo.R;
 
 public class MainActivity extends BaseActivity {
+
+    private Drawer drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,18 +41,33 @@ public class MainActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Create the AccountHeader
+        // MaterialDrawer use Picasso
+        DrawerImageLoader.init(new AbstractDrawerImageLoader() {
+            @Override
+            public void set(ImageView imageView, Uri uri, Drawable placeholder) {
+                Picasso.with(imageView.getContext()).load(uri).placeholder(placeholder).into(imageView);
+            }
+
+            @Override
+            public void cancel(ImageView imageView) {
+                Picasso.with(imageView.getContext()).cancelRequest(imageView);
+            }
+        });
+
+        User u = GlobalData.INSTANCE.getUser();
         AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .addProfiles(
                         new ProfileDrawerItem()
-                                .withName("Mike Penz")
-                                .withEmail("mikepenz@gmail.com")
-                                .withIcon(getResources().getDrawable(R.drawable.gallery))
+                                .withName(u.getName())
+                                .withEmail(u.getEmail())
+                                .withIcon(u.getProfileUrl())
                 )
                 .build();
 
-        Drawer d = new DrawerBuilder()
+        Picasso.with(this).load(u.getCoverUrl()).into(headerResult.getHeaderBackgroundView());
+
+        drawer = new DrawerBuilder()
                 .withToolbar(toolbar)
                 .withActivity(this)
                 .withAccountHeader(headerResult)
@@ -73,7 +99,7 @@ public class MainActivity extends BaseActivity {
                             break;
                     }
                     return true;
-                })
+                }).withSelectedItem(-1)
                 .build();
     }
 }

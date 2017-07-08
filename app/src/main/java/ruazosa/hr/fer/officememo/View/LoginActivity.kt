@@ -30,6 +30,8 @@ import com.google.api.client.http.HttpStatusCodes.isSuccess
 import com.google.android.gms.auth.api.signin.GoogleSignInResult
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import ruazosa.hr.fer.officememo.Controller.GlobalData
+import ruazosa.hr.fer.officememo.Model.User
 
 
 class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedListener {
@@ -68,9 +70,22 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
                 .compose(bindToLifecycle())
                 .subscribe({user->
                     //onSuccess
-                    indefProgress.hide()
-                    startActivity<MainActivity>()
-                    finish()
+                    val ref: DatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(user?.uid)
+                    ref.data().compose(bindToLifecycle())
+                            .subscribe({
+                                indefProgress.dismiss()
+                                if (it.exists()) {
+                                    indefProgress.hide()
+                                    val u: User = it.getValue(User::class.java)
+                                    GlobalData.user = u
+                                    startActivity<MainActivity>("has_user" to true)
+                                    finish()
+                                }
+                                else startActivity<LoginAdditionalActivity>("first_time" to true)
+                                finish()
+                            }) {
+                                println("Error")
+                            }
                 },{error->
                     //onError
                 },{
@@ -94,7 +109,12 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
                 ref.data().compose(bindToLifecycle())
                         .subscribe({
                             indefProgress.dismiss()
-                            if (it.exists()) startActivity<MainActivity>()
+                            if (it.exists()) {
+                                val u: User = it.getValue(User::class.java)
+                                GlobalData.user = u
+                                GlobalData.hasUser = true
+                                startActivity<MainActivity>("has_user" to true)
+                            }
                             else startActivity<LoginAdditionalActivity>("first_time" to true)
                             finish()
                         }) {
