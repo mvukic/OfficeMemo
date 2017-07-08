@@ -23,7 +23,7 @@ import ruazosa.hr.fer.officememo.R;
  * Created by shimun on 08.07.17..
  */
 
-public class FeedAdapter extends RecyclerView.Adapter<SubscriptionViewHolder> {
+public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder> {
     Context context;
     List<Post> listOfPosts;
 
@@ -33,13 +33,13 @@ public class FeedAdapter extends RecyclerView.Adapter<SubscriptionViewHolder> {
     }
 
     @Override
-    public SubscriptionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public FeedViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_item, parent, false);
         return new FeedViewHolder(context, view, this);
     }
 
     @Override
-    public void onBindViewHolder(SubscriptionViewHolder holder, int position) {
+    public void onBindViewHolder(FeedViewHolder holder, int position) {
 
     }
 
