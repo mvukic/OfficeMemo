@@ -169,6 +169,8 @@ public class NewPostActivity extends AppCompatActivity {//implements IPickResult
                 Snackbar.make(getCurrentFocus(), R.string.check_your_values, Snackbar.LENGTH_LONG).show();
 
             } else {
+                dialog = ProgressDialog.show(NewPostActivity.this, "",
+                        "Posting. Please wait...", true);
                 newPost.setContent(content.getText().toString());
                 newPost.setTitle(title.getText().toString());
                 newPost.setUid(GlobalData.user.getUid());
@@ -181,11 +183,13 @@ public class NewPostActivity extends AppCompatActivity {//implements IPickResult
                             a1.subscribe(snapshot -> {
                                 newPost.setImageUrl(snapshot.getDownloadUrl().toString());
                                 FirebaseHandler.pushPost(newPost);
+                                dialog.dismiss();
                                 finish();
                             });
                 }
                 else {
                     FirebaseHandler.pushPost(newPost);
+                    dialog.dismiss();
                     finish();
                 }
 

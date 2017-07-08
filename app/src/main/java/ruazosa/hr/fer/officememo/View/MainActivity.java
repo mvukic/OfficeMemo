@@ -1,5 +1,6 @@
 package ruazosa.hr.fer.officememo.View;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -45,6 +46,7 @@ public class MainActivity extends BaseActivity {
     SwipeRefreshLayout swipeRefreshLayout;
     private Drawer drawer;
     private AccountHeader headerResult;
+    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,22 +141,29 @@ public class MainActivity extends BaseActivity {
     }
 
     private void addListeners() {
+         dialog = ProgressDialog.show(MainActivity.this, "",
+                "Fetching posts. Please wait...", true);
         RxFirebaseDatabase.observeSingleValueEvent(FirebaseDatabase.getInstance().getReference("posts"),
                 DataSnapshotMapper.listOf(Post.class)).doOnError(throwable -> {
 
         }).subscribe(posts -> {
                     listOfPosts.clear();
                     posts.forEach(post -> listOfPosts.add(0,post));
+                    dialog.dismiss();
                     adapter.notifyDataSetChanged();
         });
         swipeRefreshLayout.setOnRefreshListener(() -> {
+            dialog = ProgressDialog.show(MainActivity.this, "",
+                    "Fetching posts. Please wait...", true);
             RxFirebaseDatabase.observeSingleValueEvent(FirebaseDatabase.getInstance().getReference("posts"),
                     DataSnapshotMapper.listOf(Post.class)).doOnError(throwable -> {
 
             }).subscribe(posts -> {
                 listOfPosts.clear();
                 posts.forEach(post -> listOfPosts.add(0,post));
+                dialog.dismiss();
                 adapter.notifyDataSetChanged();
+
                 swipeRefreshLayout.setRefreshing(false);
             });
         });

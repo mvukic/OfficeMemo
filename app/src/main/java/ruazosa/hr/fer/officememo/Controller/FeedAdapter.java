@@ -57,6 +57,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder> {
             holder.location.setVisibility(View.GONE);
         }
         else {
+            holder.location.setVisibility(View.VISIBLE);
             holder.location.setText(post.getLocation());
         }
         if(post.getImageUrl().isEmpty()){
