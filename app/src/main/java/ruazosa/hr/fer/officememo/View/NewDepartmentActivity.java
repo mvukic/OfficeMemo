@@ -147,16 +147,18 @@ public class NewDepartmentActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == Activity.RESULT_OK){
-            Uri image = data.getData();
-            switch (requestCode){
-                case PROFILE_CODE:
-                    OfficeMemo.setImageToView(this, profile, image);
-                    currentProfile = image;
-                    break;
-                case COVER_CODE:
-                    OfficeMemo.setImageToView(this, cover, image);
-                    currentCover = image;
-                    break;
+            if(data != null){
+                Uri image = data.getData();
+                switch (requestCode){
+                    case PROFILE_CODE:
+                        OfficeMemo.setImageToView(this, profile, image);
+                        currentProfile = image;
+                        break;
+                    case COVER_CODE:
+                        OfficeMemo.setImageToView(this, cover, image);
+                        currentCover = image;
+                        break;
+                }
             }
         }
     }

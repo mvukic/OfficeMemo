@@ -178,36 +178,29 @@ class LoginAdditionalActivity : RxAppCompatActivity() {
                         OfficeMemo.setImageToView(this,imageViewCover)
                         indefProgress.hide()
                     }else{
-                        val ref = FirebaseDatabase.getInstance().getReference("users").child(it.uid)
-//                        ref.data().compose(bindToLifecycle()).subscribe({
-//                            val u = it.getValue(User::class.java)
-                            val u = GlobalData.user
-                            existingUser = u
-                            firstNameInput.setText(u.name)
-                            lastNameInput.setText(u.lastName)
-                            emailInput.setText(u.email)
-                            locationInput.setText(u.location)
-                            aboutInput.setText(u.aboutMe)
-                            if(u.coverUrl.isEmpty()) {
-                                currentCover = OfficeMemo.placeholderImage
-                            }else{
-                                currentCover = Uri.parse(u.coverUrl)
-                            }
-                            if(u.profileUrl.isEmpty()) {
-                                currentProfile = OfficeMemo.placeholderImage
-                            }else{
-                                currentProfile = Uri.parse(u.profileUrl)
-                            }
-                            OfficeMemo.setImageToView(this,imageViewProfile, currentProfile)
-                            OfficeMemo.setImageToView(this,imageViewCover, currentCover)
-                            indefProgress.hide()
-//                        },{
-//                            FirebaseCrash.log("LoginAdditionActivity: Error getting user from database.")
-//                            indefProgress.hide()
-//                        })
+                        val u = GlobalData.user
+                        existingUser = u
+                        firstNameInput.setText(u.name)
+                        lastNameInput.setText(u.lastName)
+                        emailInput.setText(u.email)
+                        locationInput.setText(u.location)
+                        aboutInput.setText(u.aboutMe)
+                        if(u.coverUrl.isEmpty()) {
+                            currentCover = OfficeMemo.placeholderImage
+                        }else{
+                            currentCover = Uri.parse(u.coverUrl)
+                        }
+                        if(u.profileUrl.isEmpty()) {
+                            currentProfile = OfficeMemo.placeholderImage
+                        }else{
+                            currentProfile = Uri.parse(u.profileUrl)
+                        }
+                        OfficeMemo.setImageToView(this,imageViewProfile, currentProfile)
+                        OfficeMemo.setImageToView(this,imageViewCover, currentCover)
+                        indefProgress.hide()
                     }
                 },{error->
-                    FirebaseCrash.log("LoginAdditionActivity: Error getting current user from firebase.")
+                    FirebaseCrash.log("LoginAdditionActivity: ${error.message}")
                 })
 
         val zipped = Observables.combineLatest(firstNameInput.textChanges(),
@@ -244,7 +237,6 @@ class LoginAdditionalActivity : RxAppCompatActivity() {
                     }
                     buttonCreateUser.isEnabled = !fname.isEmpty() && !lname.isEmpty() && !about.isEmpty() && !email.isEmpty() && !location.isEmpty()
         }
-
     }
 
     fun saveUser(u:User){
@@ -261,22 +253,25 @@ class LoginAdditionalActivity : RxAppCompatActivity() {
         })
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
-            val image = data.data
-            when (requestCode) {
-                PROFILE_CODE -> {
-                    OfficeMemo.setImageToView(this, imageViewProfile, image)
-                    currentProfile = image
-                    currentProfileUpdated = true
-                }
-                COVER_CODE -> {
-                    OfficeMemo.setImageToView(this, imageViewCover, image)
-                    currentCover = image
-                    currentCoverUpdated = true
+            if(data != null){
+                val image: Uri = data.data
+                when (requestCode) {
+                    PROFILE_CODE -> {
+                        OfficeMemo.setImageToView(this, imageViewProfile, image)
+                        currentProfile = image
+                        currentProfileUpdated = true
+                    }
+                    COVER_CODE -> {
+                        OfficeMemo.setImageToView(this, imageViewCover, image)
+                        currentCover = image
+                        currentCoverUpdated = true
+                    }
                 }
             }
         }
+
     }
 
     override fun onDestroy() {

@@ -31,6 +31,7 @@ import ruazosa.hr.fer.officememo.R;
 public class MainActivity extends BaseActivity {
 
     private Drawer drawer;
+    private AccountHeader headerResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,7 @@ public class MainActivity extends BaseActivity {
         });
 
         User u = GlobalData.INSTANCE.getUser();
-        AccountHeader headerResult = new AccountHeaderBuilder()
+        headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .addProfiles(
                         new ProfileDrawerItem()
@@ -72,8 +73,8 @@ public class MainActivity extends BaseActivity {
                 .withActivity(this)
                 .withAccountHeader(headerResult)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withIdentifier(1).withName("New post"),
                         new PrimaryDrawerItem().withIdentifier(2).withName("Me"),
+                        new PrimaryDrawerItem().withIdentifier(1).withName("New post"),
                         new PrimaryDrawerItem().withIdentifier(3).withName("New department"),
                         new PrimaryDrawerItem().withIdentifier(4).withName("Subscriptions")
 
@@ -101,5 +102,25 @@ public class MainActivity extends BaseActivity {
                     return true;
                 }).withSelectedItem(-1)
                 .build();
+    }
+
+    public void refreshHeader(){
+        User u = GlobalData.INSTANCE.getUser();
+        Picasso.with(this).load(u.getCoverUrl()).into(headerResult.getHeaderBackgroundView());
+        headerResult.getActiveProfile().withName(u.getName());
+        headerResult.getActiveProfile().withEmail(u.getEmail());
+        headerResult.getActiveProfile().withIcon(u.getProfileUrl());
+        headerResult.removeProfile(0);
+        headerResult.addProfile(
+                new ProfileDrawerItem()
+                .withName(u.getName())
+                .withEmail(u.getEmail())
+                .withIcon(u.getProfileUrl()),0);
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        refreshHeader();
     }
 }

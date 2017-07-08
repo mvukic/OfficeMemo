@@ -8,7 +8,6 @@ import com.github.b3er.rxfirebase.auth.rxGetCurrentUser
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.common.SignInButton
 import com.google.firebase.auth.FirebaseAuth
-import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.view.clicks
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import org.jetbrains.anko.indeterminateProgressDialog
@@ -17,17 +16,9 @@ import ruazosa.hr.fer.officememo.R
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
-import com.github.b3er.rxfirebase.auth.RxFirebaseAuth.getCurrentUser
 import com.github.b3er.rxfirebase.database.data
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.AuthResult
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.AuthCredential
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.api.client.http.HttpStatusCodes.isSuccess
-import com.google.android.gms.auth.api.signin.GoogleSignInResult
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import ruazosa.hr.fer.officememo.Controller.GlobalData
@@ -37,8 +28,8 @@ import ruazosa.hr.fer.officememo.Model.User
 class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedListener {
 
     private val RC_SIGN_IN = 9001
-    var mGoogleApiClient: GoogleApiClient? = null
-    var mAuth:FirebaseAuth? = null
+    lateinit var mGoogleApiClient: GoogleApiClient
+    lateinit var mAuth: FirebaseAuth
     lateinit var indefProgress:ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +61,7 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
                 .compose(bindToLifecycle())
                 .subscribe({user->
                     //onSuccess
-                    val ref: DatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(user?.uid)
+                    val ref: DatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(user.uid)
                     ref.data().compose(bindToLifecycle())
                             .subscribe({
                                 indefProgress.dismiss()
@@ -87,7 +78,7 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
                                 println("Error")
                             }
                 },{error->
-                    //onError
+                    println("Error")
                 },{
                     // onComplete
                     indefProgress.hide()
@@ -101,19 +92,19 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
 
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount?) {
         val credential = GoogleAuthProvider.getCredential(acct?.idToken, null)
-        mAuth?.signInWithCredential(credential)?.addOnCompleteListener(this){ task ->
+        mAuth.signInWithCredential(credential)?.addOnCompleteListener(this){ task ->
             if (task.isSuccessful) {
-                val user = mAuth?.currentUser
+                val user = mAuth.currentUser
                 indefProgress.show()
                 val ref: DatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(user?.uid)
                 ref.data().compose(bindToLifecycle())
                         .subscribe({
-                            indefProgress.dismiss()
+                            indefProgress.hide()
                             if (it.exists()) {
                                 val u: User = it.getValue(User::class.java)
                                 GlobalData.user = u
                                 GlobalData.hasUser = true
-                                startActivity<MainActivity>("has_user" to true)
+                                startActivity<MainActivity>()
                             }
                             else startActivity<LoginAdditionalActivity>("first_time" to true)
                             finish()
@@ -140,7 +131,7 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
                 val account = result.signInAccount
                 firebaseAuthWithGoogle(account)
             } else {
-                Snackbar.make(this.currentFocus,"Authentication failed.", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(this.currentFocus,"Authentication failed.", Snackbar.LENGTH_LONG).show()
             }
         }
     }
