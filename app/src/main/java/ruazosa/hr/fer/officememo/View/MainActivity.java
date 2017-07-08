@@ -18,6 +18,7 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.picasso.Picasso;
@@ -63,7 +64,10 @@ public class MainActivity extends BaseActivity {
                                 .withName(u.getName())
                                 .withEmail(u.getEmail())
                                 .withIcon(u.getProfileUrl())
-                )
+                ).withOnAccountHeaderListener((view, profile, currentProfile) -> {
+                    startActivity(new Intent(this,LoginAdditionalActivity.class));
+                    return false;
+                })
                 .build();
 
         Picasso.with(this).load(u.getCoverUrl()).into(headerResult.getHeaderBackgroundView());
