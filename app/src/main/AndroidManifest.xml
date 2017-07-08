@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="ruazosa.hr.fer.officememo">
+    package="ruazosa.hr.fer.officememo"
+    tools:ignore="InnerclassSeparator">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -12,7 +13,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionBar">
+        android:theme="@style/MyTheme.NoActionBar">
         <activity android:name=".View.MainActivity" />
         <activity android:name=".View.NewPostActivity" />
 
@@ -41,16 +42,18 @@
             android:value="AIzaSyDoS9HvPRusZSJ3AyT42I_JfBFEmMLatOU" />
 
         <activity android:name=".View.NewDepartmentActivity" />
-        <activity android:name=".View.DepartmentSubscriptionActivity"></activity>
+        <activity android:name=".View.DepartmentSubscriptionActivity" />
 
         <service
-            android:name=".Messaging.OMFirebaseInstanceIdService">
+            android:name=".Messaging.OMFirebaseInstanceIdService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
         <service
-            android:name=".Messaging.OMFirebaseMessagingService">
+            android:name=".Messaging.OMFirebaseMessagingService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>

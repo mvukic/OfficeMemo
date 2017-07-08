@@ -93,6 +93,8 @@ dependencies {
         exclude group: "org.apache.httpcomponents", module: "httpclient"
     }
 
+    compile 'com.github.pwittchen:reactivenetwork-rx2:0.9.1'
+
 
 }
 configurations {
