@@ -13,6 +13,7 @@ data class Post(
         var imageUrl: String = "",
         var timeStamp: String = "",
         var location: String = "",
-        var comments: List<Comment> = asList(),
+        var comments: List<Comment> = ArrayList(),
+        var upVotesList: List<String> = ArrayList(),
         var upVotes: Long = 0
 )
