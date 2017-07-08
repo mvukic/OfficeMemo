@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.ImageView;
 
 
@@ -37,6 +38,16 @@ public class MainActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Intent i = getIntent();
+        if(i.hasExtra("pid")){
+            Log.d("MA","Notification pid: "+i.getStringExtra("pid"));
+        }
+        if(i.hasExtra("did")){
+            Log.d("MA","Notification did: "+i.getStringExtra("did"));
+        }
+        if(i.hasExtra("uid")){
+            Log.d("MA","Notification uid: "+i.getStringExtra("uid"));
+        }
         // MaterialDrawer use Picasso
         DrawerImageLoader.init(new AbstractDrawerImageLoader() {
             @Override
@@ -73,25 +84,25 @@ public class MainActivity extends BaseActivity {
                 .addDrawerItems(
                         new PrimaryDrawerItem().withIdentifier(0).withName("Me"),
                         new PrimaryDrawerItem().withIdentifier(1).withName("New post"),
-                        new PrimaryDrawerItem().withIdentifier(3).withName("New department"),
-                        new PrimaryDrawerItem().withIdentifier(4).withName("Subscriptions")
+                        new PrimaryDrawerItem().withIdentifier(2).withName("New department"),
+                        new PrimaryDrawerItem().withIdentifier(3).withName("Subscriptions")
                 )
-                .addStickyDrawerItems(new PrimaryDrawerItem().withIdentifier(5).withName("Sign out"))
+                .addStickyDrawerItems(new PrimaryDrawerItem().withIdentifier(4).withName("Sign out"))
                 .withOnDrawerItemClickListener((view, position, drawerItem) -> {
                     switch((int)drawerItem.getIdentifier()){
                         case 1:
                             startActivity(new Intent(this,NewPostActivity.class));
                             return false;
-                        case 2:
+                        case 0:
                             startActivity(new Intent(this,LoginAdditionalActivity.class));
                             return false;
-                        case 3:
+                        case 2:
                             startActivity(new Intent(this, NewDepartmentActivity.class));
                             return false;
-                        case 4:
+                        case 3:
                             startActivity(new Intent(this, DepartmentSubscriptionActivity.class));
                             return false;
-                        case 5:
+                        case 4:
                             signOut(this);
                             return false;
                         default:

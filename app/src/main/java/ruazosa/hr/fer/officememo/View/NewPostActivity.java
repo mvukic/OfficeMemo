@@ -72,6 +72,7 @@ import ruazosa.hr.fer.officememo.Model.ObservableList;
 import ruazosa.hr.fer.officememo.Model.OfficeMemo;
 import ruazosa.hr.fer.officememo.Model.Post;
 import ruazosa.hr.fer.officememo.R;
+import ruazosa.hr.fer.officememo.Utils.GlobalData;
 
 // TODO: 29.6.2017. add description of image using Google Vision API
 public class NewPostActivity extends AppCompatActivity {//implements IPickResult {
@@ -164,7 +165,7 @@ public class NewPostActivity extends AppCompatActivity {//implements IPickResult
             } else {
                 newPost.setContent(content.getText().toString());
                 newPost.setTitle(title.getText().toString());
-                newPost.setUid("sdfasd4");
+                newPost.setUid(GlobalData.user.getUid());
                 newPost.setTimeStamp(OfficeMemo.timeStampToString(new Date()));
                 if (currentImageUri == null)
                     FirebaseHandler.pushPost(newPost);
