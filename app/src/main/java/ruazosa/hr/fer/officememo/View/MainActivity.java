@@ -103,7 +103,7 @@ public class MainActivity extends BaseActivity {
                             startActivity(new Intent(this, DepartmentSubscriptionActivity.class));
                             return false;
                         case 4:
-                            signOut(this);
+                            signOut();
                             return false;
                         default:
                             break;
