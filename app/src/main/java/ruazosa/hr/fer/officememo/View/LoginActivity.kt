@@ -66,7 +66,6 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
                             .subscribe({
                                 indefProgress.dismiss()
                                 if (it.exists()) {
-                                    indefProgress.hide()
                                     val u: User = it.getValue(User::class.java)
                                     GlobalData.user = u
                                     startActivity<MainActivity>("has_user" to true)
@@ -78,6 +77,7 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
                                 println("Error")
                             }
                 },{error->
+                    // onError
                     println("Error")
                 },{
                     // onComplete
@@ -92,7 +92,7 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
 
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount?) {
         val credential = GoogleAuthProvider.getCredential(acct?.idToken, null)
-        mAuth.signInWithCredential(credential)?.addOnCompleteListener(this){ task ->
+        mAuth.signInWithCredential(credential).addOnCompleteListener(this){ task ->
             if (task.isSuccessful) {
                 val user = mAuth.currentUser
                 indefProgress.show()

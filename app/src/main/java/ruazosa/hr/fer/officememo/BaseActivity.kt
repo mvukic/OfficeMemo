@@ -14,14 +14,10 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crash.FirebaseCrash
-import durdinapps.rxfirebase2.RxFirebaseAuth
 import org.jetbrains.anko.startActivity
 import ruazosa.hr.fer.officememo.View.LoginActivity
 
 
-/**
- * Created by matija on 30.06.17..
- */
 open class BaseActivity : AppCompatActivity(),GoogleApiClient.OnConnectionFailedListener  {
 
     override fun onConnectionFailed(p0: ConnectionResult) {
@@ -30,15 +26,9 @@ open class BaseActivity : AppCompatActivity(),GoogleApiClient.OnConnectionFailed
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
-        FirebaseAuth.getInstance().authStateChanges()
-                .subscribe({
-                    println("State changed")
-                }, {
-                    println("Error occured")
-                })
     }
 
-    fun signOut(context: Activity){
+    fun signOut(){
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -51,7 +41,6 @@ open class BaseActivity : AppCompatActivity(),GoogleApiClient.OnConnectionFailed
         mGoogleApiClient.connect()
         mGoogleApiClient.registerConnectionCallbacks(object:GoogleApiClient.ConnectionCallbacks{
             override fun onConnected(p0: Bundle?) {
-                println("connected")
                 mAuth.signOut()
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback {
                     startActivity<LoginActivity>()
@@ -59,7 +48,6 @@ open class BaseActivity : AppCompatActivity(),GoogleApiClient.OnConnectionFailed
             }
 
             override fun onConnectionSuspended(p0: Int) {
-            println("suspended")
             }
         })
 

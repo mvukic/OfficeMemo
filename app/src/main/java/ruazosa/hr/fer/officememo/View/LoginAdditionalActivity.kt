@@ -155,10 +155,11 @@ class LoginAdditionalActivity : RxAppCompatActivity() {
 
         })
 
-        FirebaseAuth.getInstance().rxGetCurrentUser().compose(bindToLifecycle())
-                .subscribe({
-                    user = it
-                    if(firstTimeOpened){
+
+        if(firstTimeOpened){
+            FirebaseAuth.getInstance().rxGetCurrentUser().compose(bindToLifecycle())
+                    .subscribe({
+                        user = it
                         val flnames = it.displayName.toString().split(" ").toMutableList()
                         if(flnames.size > 1){
                             firstNameInput.setText(flnames[0])
@@ -174,31 +175,32 @@ class LoginAdditionalActivity : RxAppCompatActivity() {
                         OfficeMemo.setImageToView(this, imageViewProfile)
                         OfficeMemo.setImageToView(this,imageViewCover)
                         indefProgress.hide()
-                    }else{
-                        val u = GlobalData.user
-                        existingUser = u
-                        firstNameInput.setText(u.name)
-                        lastNameInput.setText(u.lastName)
-                        emailInput.setText(u.email)
-                        locationInput.setText(u.location)
-                        aboutInput.setText(u.aboutMe)
-                        if(u.coverUrl.isEmpty()) {
-                            currentCover = OfficeMemo.placeholderImage
-                        }else{
-                            currentCover = Uri.parse(u.coverUrl)
-                        }
-                        if(u.profileUrl.isEmpty()) {
-                            currentProfile = OfficeMemo.placeholderImage
-                        }else{
-                            currentProfile = Uri.parse(u.profileUrl)
-                        }
-                        OfficeMemo.setImageToView(this,imageViewProfile, currentProfile)
-                        OfficeMemo.setImageToView(this,imageViewCover, currentCover)
-                        indefProgress.hide()
+                    },{error->
+                        FirebaseCrash.log("LoginAdditionActivity: ${error.message}")
+                    })
+        }else{
+            val u = GlobalData.user
+            existingUser = u
+            firstNameInput.setText(u.name)
+            lastNameInput.setText(u.lastName)
+            emailInput.setText(u.email)
+            locationInput.setText(u.location)
+            aboutInput.setText(u.aboutMe)
+            if(u.coverUrl.isEmpty()) {
+                currentCover = OfficeMemo.placeholderImage
+            }else{
+                currentCover = Uri.parse(u.coverUrl)
+            }
+            if(u.profileUrl.isEmpty()) {
+                currentProfile = OfficeMemo.placeholderImage
+            }else{
+                currentProfile = Uri.parse(u.profileUrl)
+            }
+            OfficeMemo.setImageToView(this,imageViewProfile, currentProfile)
+            OfficeMemo.setImageToView(this,imageViewCover, currentCover)
+            indefProgress.hide()
                     }
-                },{error->
-                    FirebaseCrash.log("LoginAdditionActivity: ${error.message}")
-                })
+
 
         val zipped = Observables.combineLatest(firstNameInput.textChanges(),
                 lastNameInput.textChanges(), aboutInput.textChanges(),
