@@ -30,15 +30,13 @@ public class FirebaseHandler {
     * Returns key of department in firebase, saves to ref "departments"
      * @param department department object that you want to save to firebase database1
     *
-    * @param currentProfile Uri of profile picture
-     * @param currentCover Uri of cover picture*/
-    public static String pushDepartment(Department department, Uri currentProfile, Uri currentCover){
-        DatabaseReference pushRef = FirebaseDatabase.getInstance().getReference(departmentRef).push();
-        department.setDid(pushRef.getKey());
-        department.setCoverUrl("oover.url");
-        department.setImageUrl("porfile-url");
-        pushRef.setValue(department);
-        return pushRef.getKey();
+*/
+    public static Single<String> pushDepartment(Department department){
+        return Single.create(e -> {
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference(departmentRef).push();
+            ref.setValue(department);
+            e.onSuccess(ref.getKey());
+        });
     }
 
     /**

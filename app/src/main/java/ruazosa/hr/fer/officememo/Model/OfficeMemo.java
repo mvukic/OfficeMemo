@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import ruazosa.hr.fer.officememo.R;
+import ruazosa.hr.fer.officememo.View.MainActivity;
 
 /**
  * Created by shimu on 30.6.2017..
@@ -76,6 +77,28 @@ public class OfficeMemo {
         Picasso.with(context)
                 .load(image)
                 .resize(800, 800).centerInside()
+                .into(view, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        Bitmap imageBitmap = ((BitmapDrawable) view.getDrawable()).getBitmap();
+                        RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(context.getResources(), imageBitmap);
+                        imageDrawable.setCircular(true);
+                        imageDrawable.setCornerRadius(50.f);
+                        view.setImageDrawable(imageDrawable);
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+    }
+
+    public static void setImageToViewFullWidth(Context context, ImageView view, Uri image) {
+        int width = ((MainActivity)context).recyclerView.getWidth();
+        Picasso.with(context)
+                .load(image)
+                .resize(width,width).centerInside()
                 .into(view, new Callback() {
                     @Override
                     public void onSuccess() {

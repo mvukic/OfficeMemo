@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import ruazosa.hr.fer.officememo.Model.OfficeMemo;
 import ruazosa.hr.fer.officememo.Model.Post;
 import ruazosa.hr.fer.officememo.Model.User;
 import ruazosa.hr.fer.officememo.R;
+import ruazosa.hr.fer.officememo.Utils.GlobalData;
 
 /**
  * Created by shimun on 08.07.17..
@@ -40,11 +42,41 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder> {
 
     @Override
     public void onBindViewHolder(FeedViewHolder holder, int position) {
+        Post post = listOfPosts.get(position);
+        RxFirebaseDatabase.observeSingleValueEvent(FirebaseDatabase.getInstance().getReference("users")
+                .child(post.getUid()), DataSnapshotMapper.of(User.class)).subscribe(user -> {
+            OfficeMemo.setImageToView(context, holder.profile,Uri.parse(user.getProfileUrl()), 50, 50);
+            holder.name.setText(user.getName() + " " + user.getLastName());
+
+        });
+        holder.date.setText(post.getTimeStamp());
+        holder.title.setText(post.getTitle());
+        holder.content.setText(post.getContent());
+        holder.likes.setText(String.valueOf(post.getUpVotes()));
+        if(post.getLocation().isEmpty()){
+            holder.location.setVisibility(View.GONE);
+        }
+        else {
+            holder.location.setText(post.getLocation());
+        }
+        if(post.getImageUrl().isEmpty()){
+            holder.image.setVisibility(View.GONE);
+        }
+        else{
+            holder.image.setVisibility(View.VISIBLE);
+            OfficeMemo.setImageToViewFullWidth(context, holder.image, Uri.parse(post.getImageUrl()));
+        }
+        if(post.getUpVotesList().contains(GlobalData.user.getUid())){
+            holder.upvote.setTextColor(context.getResources().getColor(R.color.accent));
+        }
+        else{
+            holder.upvote.setTextColor(context.getResources().getColor(R.color.md_grey_600));
+        }
 
     }
 
-    public void listOfPosts(SubscriptionViewHolder holder, int position) {
-        Post post = listOfPosts.get(position);
+    public List<Post> listOfPosts(SubscriptionViewHolder holder, int position) {
+        return listOfPosts;
 
     }
 

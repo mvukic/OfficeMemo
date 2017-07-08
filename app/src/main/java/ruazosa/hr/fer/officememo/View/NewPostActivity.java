@@ -45,7 +45,11 @@ import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
 import com.google.common.io.BaseEncoding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.UploadTask;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.squareup.picasso.Picasso;
@@ -66,6 +70,8 @@ import java.util.List;
 
 import durdinapps.rxfirebase2.DataSnapshotMapper;
 import durdinapps.rxfirebase2.RxFirebaseDatabase;
+import io.reactivex.Observable;
+import io.reactivex.rxkotlin.Observables;
 import ruazosa.hr.fer.officememo.Model.Department;
 import ruazosa.hr.fer.officememo.Model.FirebaseHandler;
 import ruazosa.hr.fer.officememo.Model.ObservableList;
@@ -167,11 +173,24 @@ public class NewPostActivity extends AppCompatActivity {//implements IPickResult
                 newPost.setTitle(title.getText().toString());
                 newPost.setUid(GlobalData.user.getUid());
                 newPost.setTimeStamp(OfficeMemo.timeStampToString(new Date()));
-                if (currentImageUri == null)
+                if (currentImageUri != null){
+                    Observable<UploadTask.TaskSnapshot> a1 = FirebaseHandler.pushUriToStorage(
+                            currentImageUri,
+                            FirebaseStorage.getInstance().getReference("posts").child(FirebaseDatabase.getInstance().getReference("postimages").push().getKey())).toObservable();
+
+                            a1.subscribe(snapshot -> {
+                                newPost.setImageUrl(snapshot.getDownloadUrl().toString());
+                                FirebaseHandler.pushPost(newPost);
+                                finish();
+                            });
+                }
+                else {
                     FirebaseHandler.pushPost(newPost);
-                else
-                    FirebaseHandler.pushPost(newPost, currentImageUri);
-                finish();
+                    finish();
+                }
+
+
+
             }
         });
 

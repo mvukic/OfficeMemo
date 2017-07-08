@@ -4,11 +4,16 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageView;
 
 
+import com.google.firebase.database.FirebaseDatabase;
+import com.jakewharton.rxbinding2.support.v4.widget.RxSwipeRefreshLayout;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -19,13 +24,25 @@ import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import durdinapps.rxfirebase2.DataSnapshotMapper;
+import durdinapps.rxfirebase2.RxFirebaseDatabase;
 import ruazosa.hr.fer.officememo.BaseActivity;
+import ruazosa.hr.fer.officememo.Controller.FeedAdapter;
+import ruazosa.hr.fer.officememo.Controller.SubscriptionAdapter;
+import ruazosa.hr.fer.officememo.Model.Post;
 import ruazosa.hr.fer.officememo.Utils.GlobalData;
 import ruazosa.hr.fer.officememo.Model.User;
 import ruazosa.hr.fer.officememo.R;
 
 public class MainActivity extends BaseActivity {
-
+    List<Post> listOfPosts = new ArrayList<>();
+    public RecyclerView recyclerView;
+    FeedAdapter adapter ;
+    SwipeRefreshLayout swipeRefreshLayout;
     private Drawer drawer;
     private AccountHeader headerResult;
 
@@ -112,6 +129,35 @@ public class MainActivity extends BaseActivity {
                 })
                 .withSelectedItem(-1)
                 .build();
+        swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipeRefreshFeed);
+        recyclerView = (RecyclerView)findViewById(R.id.recylerViewFeed);
+        adapter = new FeedAdapter(this, listOfPosts);
+        LinearLayoutManager llm = new LinearLayoutManager(this.getApplicationContext());
+        recyclerView.setLayoutManager(llm);
+        recyclerView.setAdapter(adapter);
+        addListeners();
+    }
+
+    private void addListeners() {
+        RxFirebaseDatabase.observeSingleValueEvent(FirebaseDatabase.getInstance().getReference("posts"),
+                DataSnapshotMapper.listOf(Post.class)).doOnError(throwable -> {
+
+        }).subscribe(posts -> {
+                    listOfPosts.clear();
+                    posts.forEach(post -> listOfPosts.add(0,post));
+                    adapter.notifyDataSetChanged();
+        });
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            RxFirebaseDatabase.observeSingleValueEvent(FirebaseDatabase.getInstance().getReference("posts"),
+                    DataSnapshotMapper.listOf(Post.class)).doOnError(throwable -> {
+
+            }).subscribe(posts -> {
+                listOfPosts.clear();
+                posts.forEach(post -> listOfPosts.add(0,post));
+                adapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing(false);
+            });
+        });
     }
 
     public void refreshHeader(){

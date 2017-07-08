@@ -119,7 +119,7 @@ public class NewDepartmentActivity extends AppCompatActivity {
             newDepartment.setShortName(shortName.getText().toString());
             newDepartment.setAbout(about.getText().toString());
             newDepartment.setLocation(location.getText().toString());
-            FirebaseHandler.pushDepartment(newDepartment, currentProfile, currentCover);
+            FirebaseHandler.pushDepartment(newDepartment);
             finish();
         });
 
