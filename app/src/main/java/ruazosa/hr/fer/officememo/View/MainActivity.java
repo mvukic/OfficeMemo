@@ -120,7 +120,9 @@ public class MainActivity extends BaseActivity {
                             startActivity(new Intent(this,NewPostActivity.class));
                             return false;
                         case 0:
-                            startActivity(new Intent(this,LoginAdditionalActivity.class));
+                            Intent intent = new Intent(this,UserProfileActivity.class);
+                            intent.putExtra("uid", GlobalData.INSTANCE.getUser().getUid());
+                            startActivity(intent);
                             return false;
                         case 2:
                             startActivity(new Intent(this, NewDepartmentActivity.class));
