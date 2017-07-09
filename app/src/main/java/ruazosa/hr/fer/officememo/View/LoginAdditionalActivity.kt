@@ -30,7 +30,6 @@ import java.util.*
 
 class LoginAdditionalActivity : RxAppCompatActivity() {
 
-    lateinit var user:FirebaseUser
     private val PROFILE_CODE = 0
     private val COVER_CODE = 1
     lateinit var currentProfile: Uri
@@ -159,29 +158,22 @@ class LoginAdditionalActivity : RxAppCompatActivity() {
 
 
         if(firstTimeOpened){
-            FirebaseAuth.getInstance().rxGetCurrentUser().compose(bindToLifecycle())
-                    .subscribe({
-                        user = it
-                        val flnames = it.displayName.toString().split(" ").toMutableList()
-                        if(flnames.size > 1){
-                            firstNameInput.setText(flnames[0])
-                            flnames.removeAt(0)
-                            lastNameInput.setText(flnames.joinToString(" "))
-                        }else{
-                            firstNameInput.setText(it.displayName)
-                            lastNameInput.setText("")
-                        }
-                        emailInput.setText(it.email)
-
-                        currentProfile = OfficeMemo.placeholderImage
-                        currentCover = OfficeMemo.placeholderImage
-                        OfficeMemo.setImageToView(this, imageViewProfile,currentProfile)
-                        OfficeMemo.setImageToView(this,imageViewCover,currentCover)
-                        indefProgress.hide()
-                        buttonCreateUser.isEnabled = true
-                    },{error->
-                        FirebaseCrash.log("LoginAdditionActivity: ${error.message}")
-                    })
+            val user = GlobalData.firebaseUser
+            val flnames = user.displayName.toString().split(" ").toMutableList()
+            if(flnames.size > 1){
+                firstNameInput.setText(flnames[0])
+                flnames.removeAt(0)
+                lastNameInput.setText(flnames.joinToString(" "))
+            }else{
+                firstNameInput.setText(user.displayName)
+                lastNameInput.setText("")
+            }
+            emailInput.setText(user.email)
+            currentProfile = OfficeMemo.placeholderImage
+            currentCover = OfficeMemo.placeholderImage
+            OfficeMemo.setImageToView(this, imageViewProfile,currentProfile)
+            OfficeMemo.setImageToView(this,imageViewCover,currentCover)
+            indefProgress.hide()
         }else{
             val u = GlobalData.user
             existingUser = u
