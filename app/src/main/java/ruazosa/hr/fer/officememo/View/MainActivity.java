@@ -207,7 +207,10 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        refreshHeader();
+        if(GlobalData.INSTANCE.getShouldRefreshHeader()){
+            refreshHeader();
+            GlobalData.INSTANCE.setShouldRefreshHeader(false);
+        }
         fetchPosts();
     }
 }

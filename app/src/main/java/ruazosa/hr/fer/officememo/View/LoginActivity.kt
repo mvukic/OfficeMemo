@@ -101,6 +101,7 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
                         .subscribe({
                             indefProgress.hide()
                             if (it.exists()) {
+                                println("Saving to GlobalData.")
                                 val u: User = it.getValue(User::class.java)
                                 GlobalData.user = u
                                 GlobalData.hasUser = true
