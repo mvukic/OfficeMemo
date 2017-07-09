@@ -7,5 +7,6 @@ object GlobalData {
 
     lateinit var user: User
     var hasUser: Boolean = false
+    var shouldRefreshHeader: Boolean = true
 
 }

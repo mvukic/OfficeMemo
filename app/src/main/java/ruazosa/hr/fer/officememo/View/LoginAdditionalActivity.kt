@@ -15,6 +15,7 @@ import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.storage.FirebaseStorage
 import com.jakewharton.rxbinding2.view.clicks
+import com.jakewharton.rxbinding2.view.enabled
 import com.jakewharton.rxbinding2.widget.textChanges
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import io.reactivex.rxkotlin.Observables
@@ -88,7 +89,6 @@ class LoginAdditionalActivity : RxAppCompatActivity() {
 
         buttonCreateUser.clicks().compose(bindToLifecycle()).subscribe({
             val u = User(
-                    uid = user.uid,
                     aboutMe = aboutInput.text.toString(),
                     coverUrl = currentCover.toString(),
                     email = emailInput.text.toString(),
@@ -104,15 +104,16 @@ class LoginAdditionalActivity : RxAppCompatActivity() {
             // Save previous subscriptions
             if(!firstTimeOpened){
                 u.subscriptions = existingUser.subscriptions
+                u.uid = GlobalData.user.uid
+            }else{
+                u.uid = user.uid
+                currentProfileUpdated = true
+                currentCoverUpdated = true
             }
             //Push images to storage
             indefProgress.setTitle("Updating profile")
             indefProgress.show()
 
-            if(firstTimeOpened){
-                currentProfileUpdated = true
-                currentCoverUpdated = true
-            }
             if(currentProfileUpdated && currentCoverUpdated){
                 val a1 = FirebaseHandler.pushUriToStorage(
                         currentProfile,
@@ -170,11 +171,13 @@ class LoginAdditionalActivity : RxAppCompatActivity() {
                             lastNameInput.setText("")
                         }
                         emailInput.setText(it.email)
-                        currentProfile = OfficeMemo.placeholderImage
+
+                        currentProfile = if(it.photoUrl != null) it.photoUrl!! else OfficeMemo.placeholderImage
                         currentCover = OfficeMemo.placeholderImage
                         OfficeMemo.setImageToView(this, imageViewProfile)
                         OfficeMemo.setImageToView(this,imageViewCover)
                         indefProgress.hide()
+                        buttonCreateUser.isEnabled = true
                     },{error->
                         FirebaseCrash.log("LoginAdditionActivity: ${error.message}")
                     })
@@ -245,6 +248,7 @@ class LoginAdditionalActivity : RxAppCompatActivity() {
             else Snackbar.make(window.decorView,"Saved user ${u.name}",Snackbar.LENGTH_SHORT).show()
             GlobalData.user = u
             GlobalData.hasUser = true
+            GlobalData.shouldRefreshHeader = true
         },{
             indefProgress.hide()
             FirebaseCrash.log("LoginAdditionalActivity: Error while saving a user.")
