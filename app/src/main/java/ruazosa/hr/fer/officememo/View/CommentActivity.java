@@ -59,8 +59,8 @@ public class CommentActivity extends AppCompatActivity {
             }
             ProgressDialog commentDialog =  ProgressDialog.show(CommentActivity.this, "",
                     "Posting comment. Please wait...", true);
-            Comment comment = new Comment(GlobalData.INSTANCE.getUser().getUid(),
-                    commentEditText.getText().toString(), OfficeMemo.timeStampToString(new Date()),0);
+            Comment comment = new Comment(GlobalData.user.getUid(),pid, commentEditText.getText().toString(),
+                    OfficeMemo.timeStampToString(new Date()),new ArrayList<>(),0);
 
             RxFirebaseDatabase.observeSingleValueEvent(FirebaseDatabase.getInstance()
                     .getReference("posts").child(pid), DataSnapshotMapper.of(Post.class))

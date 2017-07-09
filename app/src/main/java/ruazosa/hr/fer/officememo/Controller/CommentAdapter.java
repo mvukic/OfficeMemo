@@ -1,6 +1,7 @@
 package ruazosa.hr.fer.officememo.Controller;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import ruazosa.hr.fer.officememo.Model.Comment;
 import ruazosa.hr.fer.officememo.Model.OfficeMemo;
 import ruazosa.hr.fer.officememo.Model.User;
 import ruazosa.hr.fer.officememo.R;
+import ruazosa.hr.fer.officememo.Utils.GlobalData;
 
 /**
  * Created by shimun on 09.07.17..
@@ -46,7 +48,12 @@ public class CommentAdapter  extends RecyclerView.Adapter<CommentViewHolder> {
             holder.name.setText(user.getName() + " " + user.getLastName());
 
         });
-
+        holder.count.setText(String.valueOf(comment.getUpVotes()));
+        if(comment.getListOfLikes().contains(GlobalData.INSTANCE.getUser().getUid()))
+            holder.like.setTextColor(context.getResources().getColor(R.color.accent));
+        else{
+            holder.like.setTextColor(Color.GRAY);
+        }
         holder.date.setText(comment.getTimeStamp());
         holder.content.setText(comment.getContent());
         if(position == listOfComments.size()-1)

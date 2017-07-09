@@ -116,7 +116,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="24dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -206,6 +206,15 @@
                     android:text="Comment"
                     android:textAllCaps="true"
                     android:textColor="@color/md_grey_600"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textViewFeedCommentCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text="0"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>

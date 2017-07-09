@@ -32,7 +32,7 @@ import ruazosa.hr.fer.officememo.View.UserProfileActivity;
 
 class FeedViewHolder extends RecyclerView.ViewHolder{
     Context context;
-    TextView name, content, title, date, location, likes, upvote, comment, shortname;
+    TextView name, content, title, date, location, likes, upvote, comment, shortname, commentCount;
     FeedAdapter  adapter;
     ImageView profile, image, locationtag;
     public FeedViewHolder(Context context,View itemView, FeedAdapter adapter) {
@@ -51,6 +51,7 @@ class FeedViewHolder extends RecyclerView.ViewHolder{
         comment = (TextView) itemView.findViewById(R.id.buttonComment);
         locationtag = (ImageView)itemView.findViewById(R.id.imageViewLocationTag);
         shortname = (TextView)itemView.findViewById(R.id.textViewFeedDepartmentShortName);
+        commentCount = (TextView)itemView.findViewById(R.id.textViewFeedCommentCount);
 
         RxView.clicks(name).subscribe(o -> {
             Intent intent = new Intent(context, UserProfileActivity.class);

@@ -58,6 +58,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         holder.title.setText(post.getTitle());
         holder.content.setText(post.getContent());
         holder.likes.setText(String.valueOf(post.getUpVotes()));
+        holder.commentCount.setText(String.valueOf(post.getComments().size()));
         if(post.getLocation().isEmpty()){
             holder.location.setVisibility(View.GONE);
             holder.locationtag.setVisibility(View.GONE);
