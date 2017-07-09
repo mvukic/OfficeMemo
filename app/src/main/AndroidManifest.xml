@@ -60,6 +60,7 @@
         </service>
 
         <activity android:name=".View.DepartmentProfileActivity" />
+        <activity android:name=".View.UserProfileActivity"></activity>
     </application>
 
 </manifest>

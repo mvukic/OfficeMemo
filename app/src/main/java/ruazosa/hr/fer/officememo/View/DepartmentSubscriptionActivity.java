@@ -1,6 +1,8 @@
 package ruazosa.hr.fer.officememo.View;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.jakewharton.rxbinding2.view.RxView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +28,7 @@ public class DepartmentSubscriptionActivity extends AppCompatActivity {
     SubscriptionAdapter adapter;
     RecyclerView recyclerView;
     ProgressDialog dialog;
+    FloatingActionButton fab;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +43,7 @@ public class DepartmentSubscriptionActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this.getApplicationContext());
         recyclerView.setLayoutManager(llm);
         recyclerView.setAdapter(adapter);
+        fab = (FloatingActionButton)findViewById(R.id.fabNewDepartment);
         dialog =  ProgressDialog.show(DepartmentSubscriptionActivity.this, "",
                 "Fetching departments. Please wait...", true);
     }
@@ -53,5 +58,6 @@ public class DepartmentSubscriptionActivity extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
                     dialog.dismiss();
                 });
+        RxView.clicks(fab).subscribe(o -> startActivity(new Intent(this, NewDepartmentActivity.class)));
     }
 }
