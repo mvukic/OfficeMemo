@@ -61,6 +61,7 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
                 .compose(bindToLifecycle())
                 .subscribe({user->
                     //onSuccess
+                    GlobalData.firebaseUser = user
                     val ref: DatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(user.uid)
                     ref.data().compose(bindToLifecycle())
                             .subscribe({
@@ -95,6 +96,7 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
         mAuth.signInWithCredential(credential).addOnCompleteListener(this){ task ->
             if (task.isSuccessful) {
                 val user = mAuth.currentUser
+                GlobalData.firebaseUser = user!!
                 indefProgress.show()
                 val ref: DatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(user?.uid)
                 ref.data().compose(bindToLifecycle())

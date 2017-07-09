@@ -102,11 +102,12 @@ class LoginAdditionalActivity : RxAppCompatActivity() {
                     subscriptions = listOf()
             )
             // Save previous subscriptions
+            // Upload first images
             if(!firstTimeOpened){
-                u.subscriptions = existingUser.subscriptions
+                u.subscriptions = GlobalData.user.subscriptions
                 u.uid = GlobalData.user.uid
             }else{
-                u.uid = user.uid
+                u.uid = GlobalData.firebaseUser.uid
                 currentProfileUpdated = true
                 currentCoverUpdated = true
             }
@@ -117,12 +118,12 @@ class LoginAdditionalActivity : RxAppCompatActivity() {
             if(currentProfileUpdated && currentCoverUpdated){
                 val a1 = FirebaseHandler.pushUriToStorage(
                         currentProfile,
-                        FirebaseStorage.getInstance().getReference(user.uid).child("profileImage.jpg"))
+                        FirebaseStorage.getInstance().getReference(GlobalData.firebaseUser.uid).child("profileImage.jpg"))
                         .toObservable()
 
                 val a2 = FirebaseHandler.pushUriToStorage(
                         currentCover,
-                        FirebaseStorage.getInstance().getReference(user.uid).child("coverImage.jpg"))
+                        FirebaseStorage.getInstance().getReference(GlobalData.firebaseUser.uid).child("coverImage.jpg"))
                         .toObservable()
                 Observables.zip(a1,a2,{a,b -> listOf(a,b) }).compose(bindToLifecycle())
                         .subscribe({(profileUriTask,coverUriTask)->
@@ -133,7 +134,7 @@ class LoginAdditionalActivity : RxAppCompatActivity() {
             }else if(currentCoverUpdated){
                 FirebaseHandler.pushUriToStorage(
                         currentCover,
-                        FirebaseStorage.getInstance().getReference(user.uid).child("coverImage.jpg"))
+                        FirebaseStorage.getInstance().getReference(GlobalData.firebaseUser.uid).child("coverImage.jpg"))
                         .toObservable().compose(bindToLifecycle()).subscribe({
                     u.coverUrl = it.downloadUrl.toString()
                     u.profileUrl = currentProfile.toString()
@@ -142,7 +143,7 @@ class LoginAdditionalActivity : RxAppCompatActivity() {
             }else if(currentProfileUpdated){
                 FirebaseHandler.pushUriToStorage(
                         currentProfile,
-                        FirebaseStorage.getInstance().getReference(user.uid).child("profileImage.jpg"))
+                        FirebaseStorage.getInstance().getReference(GlobalData.firebaseUser.uid).child("profileImage.jpg"))
                         .toObservable().compose(bindToLifecycle()).subscribe({
                     u.coverUrl = currentCover.toString()
                     u.profileUrl = it.downloadUrl.toString()
@@ -172,10 +173,10 @@ class LoginAdditionalActivity : RxAppCompatActivity() {
                         }
                         emailInput.setText(it.email)
 
-                        currentProfile = if(it.photoUrl != null) it.photoUrl!! else OfficeMemo.placeholderImage
+                        currentProfile = OfficeMemo.placeholderImage
                         currentCover = OfficeMemo.placeholderImage
-                        OfficeMemo.setImageToView(this, imageViewProfile)
-                        OfficeMemo.setImageToView(this,imageViewCover)
+                        OfficeMemo.setImageToView(this, imageViewProfile,currentProfile)
+                        OfficeMemo.setImageToView(this,imageViewCover,currentCover)
                         indefProgress.hide()
                         buttonCreateUser.isEnabled = true
                     },{error->
@@ -189,20 +190,12 @@ class LoginAdditionalActivity : RxAppCompatActivity() {
             emailInput.setText(u.email)
             locationInput.setText(u.location)
             aboutInput.setText(u.aboutMe)
-            if(u.coverUrl.isEmpty()) {
-                currentCover = OfficeMemo.placeholderImage
-            }else{
-                currentCover = Uri.parse(u.coverUrl)
-            }
-            if(u.profileUrl.isEmpty()) {
-                currentProfile = OfficeMemo.placeholderImage
-            }else{
-                currentProfile = Uri.parse(u.profileUrl)
-            }
+            currentCover = Uri.parse(u.coverUrl)
+            currentProfile = Uri.parse(u.profileUrl)
             OfficeMemo.setImageToView(this,imageViewProfile, currentProfile)
             OfficeMemo.setImageToView(this,imageViewCover, currentCover)
             indefProgress.hide()
-                    }
+        }
 
 
         val zipped = Observables.combineLatest(firstNameInput.textChanges(),
