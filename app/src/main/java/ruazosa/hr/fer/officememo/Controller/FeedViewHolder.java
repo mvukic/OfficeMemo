@@ -22,6 +22,7 @@ import ruazosa.hr.fer.officememo.Model.Post;
 import ruazosa.hr.fer.officememo.Model.User;
 import ruazosa.hr.fer.officememo.R;
 import ruazosa.hr.fer.officememo.Utils.GlobalData;
+import ruazosa.hr.fer.officememo.View.CommentActivity;
 import ruazosa.hr.fer.officememo.View.DepartmentProfileActivity;
 import ruazosa.hr.fer.officememo.View.UserProfileActivity;
 
@@ -57,6 +58,12 @@ class FeedViewHolder extends RecyclerView.ViewHolder{
             intent.putExtra("uid", post.getUid());
             context.startActivity(intent);
         });
+        RxView.clicks(profile).subscribe(o -> {
+            Intent intent = new Intent(context, UserProfileActivity.class);
+            Post post = adapter.getList().get(getAdapterPosition());
+            intent.putExtra("uid", post.getUid());
+            context.startActivity(intent);
+        });
         RxView.clicks(shortname).subscribe(o -> {
             Intent intent = new Intent(context, DepartmentProfileActivity.class);
             Post post = adapter.getList().get(getAdapterPosition());
@@ -81,7 +88,10 @@ class FeedViewHolder extends RecyclerView.ViewHolder{
             FirebaseDatabase.getInstance().getReference("posts").child(post.getPid()).setValue(post);
         });
         RxView.clicks(comment).subscribe(o -> {
-            //TODO comment page
+            Post post = adapter.getList().get(getAdapterPosition());
+            Intent i = new Intent(context, CommentActivity.class);
+            i.putExtra("pid", post.getPid());
+            context.startActivity(i);
         });
 
     }

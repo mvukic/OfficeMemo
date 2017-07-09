@@ -7,4 +7,5 @@ package ruazosa.hr.fer.officememo.Model
 data class Comment(
         var uid: String = "",
         var content: String = "",
+        var timeStamp: String = "",
         var upVotes: Long = 0)
