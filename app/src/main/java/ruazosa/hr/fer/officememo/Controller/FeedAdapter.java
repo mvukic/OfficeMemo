@@ -68,7 +68,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         }
         else{
             holder.image.setVisibility(View.VISIBLE);
-            OfficeMemo.setImageToViewFullWidth(context, holder.image, Uri.parse(post.getImageUrl()));
+            OfficeMemo.setImageToView(context, holder.image, Uri.parse(post.getImageUrl()));
         }
         if(post.getUpVotesList().contains(GlobalData.user.getUid())){
             holder.upvote.setTextColor(context.getResources().getColor(R.color.accent));

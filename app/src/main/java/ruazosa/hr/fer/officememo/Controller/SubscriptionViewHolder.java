@@ -1,6 +1,7 @@
 package ruazosa.hr.fer.officememo.Controller;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -17,9 +18,11 @@ import com.jakewharton.rxbinding2.widget.RxCompoundButton;
 
 import durdinapps.rxfirebase2.DataSnapshotMapper;
 import durdinapps.rxfirebase2.RxFirebaseDatabase;
+import ruazosa.hr.fer.officememo.Model.Department;
 import ruazosa.hr.fer.officememo.Model.OfficeMemo;
 import ruazosa.hr.fer.officememo.Model.User;
 import ruazosa.hr.fer.officememo.R;
+import ruazosa.hr.fer.officememo.View.DepartmentProfileActivity;
 
 /**
  * Created by shimu on 1.7.2017..
@@ -40,6 +43,12 @@ class SubscriptionViewHolder extends RecyclerView.ViewHolder{
         toggle = (CompoundButton) itemView.findViewById(R.id.switchSubscription);
         profile = (ImageView) itemView.findViewById(R.id.imageViewSubscription);
         deli = itemView.findViewById(R.id.viewSubscription);
+        RxView.clicks(name).subscribe(o -> {
+            Department department = adapter.getList().get(getAdapterPosition());
+            Intent intent = new Intent(context, DepartmentProfileActivity.class);
+            intent.putExtra("did", department.getDid());
+            context.startActivity(intent);
+        });
         RxCompoundButton.checkedChanges(toggle).subscribe(aBoolean -> {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(OfficeMemo.getUserUid());
             RxFirebaseDatabase.observeSingleValueEvent(ref, DataSnapshotMapper.of(User.class))

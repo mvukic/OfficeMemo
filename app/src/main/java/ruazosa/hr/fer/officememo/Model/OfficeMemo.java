@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import ruazosa.hr.fer.officememo.R;
+import ruazosa.hr.fer.officememo.View.DepartmentProfileActivity;
 import ruazosa.hr.fer.officememo.View.MainActivity;
 
 /**
@@ -112,6 +113,42 @@ public class OfficeMemo {
                     @Override
                     public void onError() {
 
+                    }
+                });
+    }
+    public static void setImageToViewFullWidthDepartmentProfile(Context context, ImageView view, Uri image) {
+        int width = ((DepartmentProfileActivity)context).frame.getWidth();
+        Picasso.with(context)
+                .load(image)
+                .placeholder(R.drawable.progress_animation)
+                .resize(width,width).centerCrop()
+                .into(view, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        Bitmap imageBitmap = ((BitmapDrawable) view.getDrawable()).getBitmap();
+                        RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(context.getResources(), imageBitmap);
+                        imageDrawable.setCircular(true);
+                        imageDrawable.setCornerRadius(50.f);
+                        view.setImageDrawable(imageDrawable);
+                    }
+
+                    @Override
+                    public void onError() {
+                        Picasso.with(context)
+                                .load(R.drawable.placeholder)
+                                .resize(width, width)
+                                .centerCrop()
+                                .into(view, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+
+                                    }
+
+                                    @Override
+                                    public void onError() {
+
+                                    }
+                                });
                     }
                 });
     }

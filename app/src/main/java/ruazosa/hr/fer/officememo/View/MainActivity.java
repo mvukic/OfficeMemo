@@ -111,7 +111,7 @@ public class MainActivity extends BaseActivity {
                         new PrimaryDrawerItem().withIdentifier(0).withName("Me"),
                         new PrimaryDrawerItem().withIdentifier(1).withName("New post"),
                         new PrimaryDrawerItem().withIdentifier(2).withName("New department"),
-                        new PrimaryDrawerItem().withIdentifier(3).withName("Subscriptions")
+                        new PrimaryDrawerItem().withIdentifier(3).withName("Departments")
                 )
                 .addStickyDrawerItems(new PrimaryDrawerItem().withIdentifier(4).withName("Sign out"))
                 .withOnDrawerItemClickListener((view, position, drawerItem) -> {

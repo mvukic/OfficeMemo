@@ -1,6 +1,7 @@
 package ruazosa.hr.fer.officememo.View;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -17,12 +18,16 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.UploadTask;
 import com.jakewharton.rxbinding2.support.design.widget.RxTextInputLayout;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import io.reactivex.Observable;
 import ruazosa.hr.fer.officememo.Model.Department;
 import ruazosa.hr.fer.officememo.Model.FirebaseHandler;
 import ruazosa.hr.fer.officememo.Model.OfficeMemo;
@@ -36,7 +41,8 @@ public class NewDepartmentActivity extends AppCompatActivity {
     Uri currentProfile, currentCover;
     Button create;
     Department newDepartment = new Department();
-
+    boolean coverdone = false, profiledone = false;
+    ProgressDialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +60,7 @@ public class NewDepartmentActivity extends AppCompatActivity {
             pickIntent.setType("image/*");
 
             Intent chooserIntent = Intent.createChooser(getIntent, "Select Profile Image ");
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
 
             startActivityForResult(chooserIntent, PROFILE_CODE);
         });
@@ -72,7 +78,7 @@ public class NewDepartmentActivity extends AppCompatActivity {
             pickIntent.setType("image/*");
 
             Intent chooserIntent = Intent.createChooser(getIntent, "Select Cover Image ");
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
 
             startActivityForResult(chooserIntent, COVER_CODE);
         });
@@ -83,73 +89,112 @@ public class NewDepartmentActivity extends AppCompatActivity {
         });
 
         RxTextView.textChanges(name).subscribe(charSequence -> {
-            if(charSequence.toString().isEmpty())
+            if (charSequence.toString().isEmpty())
                 name.setError("Name can't be empty");
             else
                 name.setError(null);
         });
 
         RxTextView.textChanges(shortName).subscribe(charSequence -> {
-            if(charSequence.toString().isEmpty())
+            if (charSequence.toString().isEmpty())
                 shortName.setError("Short name can't be empty");
             else
                 shortName.setError(null);
         });
 
         RxTextView.textChanges(location).subscribe(charSequence -> {
-            if(charSequence.toString().isEmpty())
+            if (charSequence.toString().isEmpty())
                 location.setError("Location can't be empty");
             else
                 location.setError(null);
         });
 
         RxTextView.textChanges(about).subscribe(charSequence -> {
-            if(charSequence.toString().isEmpty())
+            if (charSequence.toString().isEmpty())
                 about.setError("About can't be empty");
             else
                 about.setError(null);
         });
 
         RxView.clicks(create).subscribe(o -> {
-            if(!checkValuesOfDepartment()){
+            if (!checkValuesOfDepartment()) {
                 Snackbar.make(getCurrentFocus(), R.string.check_your_values, Snackbar.LENGTH_LONG).show();
                 return;
             }
+            dialog = ProgressDialog.show(NewDepartmentActivity.this, "",
+                    "Creating department. Please wait...", true);
             newDepartment.setName(name.getText().toString());
             newDepartment.setShortName(shortName.getText().toString());
             newDepartment.setAbout(about.getText().toString());
             newDepartment.setLocation(location.getText().toString());
-            FirebaseHandler.pushDepartment(newDepartment);
-            finish();
+            if (currentProfile != null) {
+                Observable<UploadTask.TaskSnapshot> a1 = FirebaseHandler.pushUriToStorage(
+                        currentProfile,
+                        FirebaseStorage.getInstance().getReference("departments")
+                                .child(FirebaseDatabase.getInstance().getReference("departmentimages")
+                                        .push().getKey())).toObservable();
+
+                a1.subscribe(snapshot -> {
+                    newDepartment.setImageUrl(snapshot.getDownloadUrl().toString());
+                    profiledone = true;
+                    tryPush();
+                });
+            } else profiledone = true;
+            if (currentCover != null) {
+                Observable<UploadTask.TaskSnapshot> a1 = FirebaseHandler.pushUriToStorage(
+                        currentCover,
+                        FirebaseStorage.getInstance().getReference("departments")
+                                .child(FirebaseDatabase.getInstance().getReference("departmentimages")
+                                        .push().getKey())).toObservable();
+
+                a1.subscribe(snapshot -> {
+                    newDepartment.setCoverUrl(snapshot.getDownloadUrl().toString());
+                    coverdone = true;
+                    tryPush();
+                });
+            } else coverdone = true;
+            if (profiledone && coverdone) {
+                FirebaseHandler.pushDepartment(newDepartment);
+                dialog.dismiss();
+                finish();
+            }
         });
 
         RxView.longClicks(profile).subscribe(o -> {
             profile.setImageResource(R.drawable.gallery);
-            currentProfile=null;
+            currentProfile = null;
             Snackbar.make(getCurrentFocus(), R.string.removed_image, Snackbar.LENGTH_SHORT).show();
 
         });
 
         RxView.longClicks(cover).subscribe(o -> {
             cover.setImageResource(R.drawable.gallery);
-            currentCover=null;
+            currentCover = null;
             Snackbar.make(getCurrentFocus(), R.string.removed_image, Snackbar.LENGTH_SHORT).show();
 
         });
     }
 
-    private boolean checkValuesOfDepartment(){
+    private void tryPush() {
+        if (profiledone && coverdone) {
+            FirebaseHandler.pushDepartment(newDepartment);
+            dialog.dismiss();
+            finish();
+        }
+    }
+
+    private boolean checkValuesOfDepartment() {
         return !(name.getText().toString().isEmpty() || shortName.getText().toString().isEmpty()
                 || about.getText().toString().isEmpty() || location.getText().toString().isEmpty()
-                || currentCover == null || currentProfile == null);
+                );
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == Activity.RESULT_OK){
-            if(data != null){
+        if (resultCode == Activity.RESULT_OK) {
+            if (data != null) {
                 Uri image = data.getData();
-                switch (requestCode){
+                switch (requestCode) {
                     case PROFILE_CODE:
                         OfficeMemo.setImageToView(this, profile, image);
                         currentProfile = image;
