@@ -100,15 +100,16 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="32dp"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="0dp"
                 android:text="TextView"
                 android:textAppearance="@android:style/TextAppearance.Material.Small"
                 android:textColor="@color/accent"
                 android:textStyle="italic"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewFeedTitle" />
+                app:layout_constraintStart_toEndOf="@+id/imageViewLocationTag"
+                android:layout_marginStart="8dp"
+                app:layout_constraintTop_toTopOf="@+id/imageViewLocationTag"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewLocationTag" />
 
             <ImageView
                 android:id="@+id/imageViewFeedPicture"
@@ -123,6 +124,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textViewFeedContent"
                 app:srcCompat="@drawable/progress_animation" />
+
+            <ImageView
+                android:id="@+id/imageViewLocationTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_location_on_black_18dp"
+                tools:layout_editor_absoluteY="95dp"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/textViewFeedTitle" />
 
         </android.support.constraint.ConstraintLayout>
 

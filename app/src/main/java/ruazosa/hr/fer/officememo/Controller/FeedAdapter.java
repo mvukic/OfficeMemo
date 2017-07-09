@@ -55,10 +55,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         holder.likes.setText(String.valueOf(post.getUpVotes()));
         if(post.getLocation().isEmpty()){
             holder.location.setVisibility(View.GONE);
+            holder.locationtag.setVisibility(View.GONE);
         }
         else {
             holder.location.setVisibility(View.VISIBLE);
             holder.location.setText(post.getLocation());
+            holder.locationtag.setVisibility(View.VISIBLE);
+
         }
         if(post.getImageUrl().isEmpty()){
             holder.image.setVisibility(View.GONE);

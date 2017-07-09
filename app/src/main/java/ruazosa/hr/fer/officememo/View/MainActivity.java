@@ -5,16 +5,20 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 
 import com.google.firebase.database.FirebaseDatabase;
 import com.jakewharton.rxbinding2.support.v4.widget.RxSwipeRefreshLayout;
+import com.jakewharton.rxbinding2.support.v7.widget.RxRecyclerView;
+import com.jakewharton.rxbinding2.view.RxView;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -26,6 +30,7 @@ import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +44,7 @@ import ruazosa.hr.fer.officememo.Utils.GlobalData;
 import ruazosa.hr.fer.officememo.Model.User;
 import ruazosa.hr.fer.officememo.R;
 
+// TODO: 09.07.17. Feed by department (spinner) and change query
 public class MainActivity extends BaseActivity {
     List<Post> listOfPosts = new ArrayList<>();
     public RecyclerView recyclerView;
@@ -47,6 +53,7 @@ public class MainActivity extends BaseActivity {
     private Drawer drawer;
     private AccountHeader headerResult;
     ProgressDialog dialog;
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +139,7 @@ public class MainActivity extends BaseActivity {
                 .withSelectedItem(-1)
                 .build();
         swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipeRefreshFeed);
+        fab = (FloatingActionButton)findViewById(R.id.fabNewPost);
         recyclerView = (RecyclerView)findViewById(R.id.recylerViewFeed);
         adapter = new FeedAdapter(this, listOfPosts);
         LinearLayoutManager llm = new LinearLayoutManager(this.getApplicationContext());
@@ -141,31 +149,44 @@ public class MainActivity extends BaseActivity {
     }
 
     private void addListeners() {
-         dialog = ProgressDialog.show(MainActivity.this, "",
+         fetchPosts();
+         dialog.dismiss();
+        swipeRefreshLayout.setOnRefreshListener(() -> fetchPosts());
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (dy > 0) {
+                    // Scroll Down
+                    if (fab.isShown()) {
+                        fab.hide();
+                    }
+                } else if (dy < 0) {
+                    // Scroll Up
+                    if (!fab.isShown()) {
+                        fab.show();
+                    }
+                }
+            }
+        });
+        RxView.clicks(fab).subscribe(o -> startActivity(new Intent(this,NewPostActivity.class)));
+    }
+
+    private void fetchPosts() {
+        dialog = ProgressDialog.show(MainActivity.this, "",
                 "Fetching posts. Please wait...", true);
         RxFirebaseDatabase.observeSingleValueEvent(FirebaseDatabase.getInstance().getReference("posts"),
                 DataSnapshotMapper.listOf(Post.class)).doOnError(throwable -> {
 
         }).subscribe(posts -> {
-                    listOfPosts.clear();
-                    posts.forEach(post -> listOfPosts.add(0,post));
-                    dialog.dismiss();
-                    adapter.notifyDataSetChanged();
-        });
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            dialog = ProgressDialog.show(MainActivity.this, "",
-                    "Fetching posts. Please wait...", true);
-            RxFirebaseDatabase.observeSingleValueEvent(FirebaseDatabase.getInstance().getReference("posts"),
-                    DataSnapshotMapper.listOf(Post.class)).doOnError(throwable -> {
+            listOfPosts.clear();
+            posts.forEach(post -> listOfPosts.add(0,post));
+            listOfPosts.sort(Comparator.comparing(Post::getTimeStamp).reversed());
+            dialog.dismiss();
+            adapter.notifyDataSetChanged();
+            swipeRefreshLayout.setRefreshing(false);
 
-            }).subscribe(posts -> {
-                listOfPosts.clear();
-                posts.forEach(post -> listOfPosts.add(0,post));
-                dialog.dismiss();
-                adapter.notifyDataSetChanged();
-
-                swipeRefreshLayout.setRefreshing(false);
-            });
         });
     }
 
@@ -187,5 +208,6 @@ public class MainActivity extends BaseActivity {
     protected void onPostResume() {
         super.onPostResume();
         refreshHeader();
+        fetchPosts();
     }
 }

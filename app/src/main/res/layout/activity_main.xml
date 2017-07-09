@@ -7,13 +7,16 @@
     android:layout_height="match_parent"
     tools:context="ruazosa.hr.fer.officememo.View.MainActivity">
 
-    <include layout="@layout/appbar" />
+    <include layout="@layout/appbar"
+        android:id="@+id/include" />
 
     <include
         layout="@layout/content_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteY="75dp" />
+        tools:layout_editor_absoluteY="75dp"
+        app:layout_anchorGravity="left|top"
+        app:layout_anchor="@+id/include" />
 
 </android.support.design.widget.CoordinatorLayout>
 

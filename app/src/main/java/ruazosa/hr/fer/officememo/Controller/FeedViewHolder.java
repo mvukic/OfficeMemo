@@ -1,6 +1,7 @@
 package ruazosa.hr.fer.officememo.Controller;
 
 import android.content.Context;
+import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -29,7 +30,7 @@ class FeedViewHolder extends RecyclerView.ViewHolder{
     Context context;
     TextView name, content, title, date, location, likes, upvote, comment;
     FeedAdapter  adapter;
-    ImageView profile, image;
+    ImageView profile, image, locationtag;
     public FeedViewHolder(Context context,View itemView, FeedAdapter adapter) {
         super(itemView);
         this.context = context;
@@ -44,6 +45,7 @@ class FeedViewHolder extends RecyclerView.ViewHolder{
         likes = (TextView)itemView.findViewById(R.id.textViewFeedVote);
         upvote = (TextView)itemView.findViewById(R.id.buttonLike);
         comment = (TextView) itemView.findViewById(R.id.buttonComment);
+        locationtag = (ImageView)itemView.findViewById(R.id.imageViewLocationTag);
         RxView.clicks(upvote).subscribe(o -> {
             Post post = adapter.getList().get(getAdapterPosition());
             if(post.getUpVotesList().contains(GlobalData.user.getUid())){
@@ -58,7 +60,7 @@ class FeedViewHolder extends RecyclerView.ViewHolder{
 
             }
             likes.setText(String.valueOf(post.getUpVotes()));
-            FirebaseDatabase.getInstance().getReference("posts").child(post.getDid()).setValue(post);
+            FirebaseDatabase.getInstance().getReference("posts").child(post.getPid()).setValue(post);
         });
         RxView.clicks(comment).subscribe(o -> {
             //TODO comment page
