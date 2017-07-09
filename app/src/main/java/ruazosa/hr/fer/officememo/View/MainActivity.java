@@ -65,6 +65,8 @@ public class MainActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         Intent i = getIntent();
+
+        // Additional info when coming from notification tap
         if(i.hasExtra("pid")){
             Log.d("MA","Notification pid: "+i.getStringExtra("pid"));
         }

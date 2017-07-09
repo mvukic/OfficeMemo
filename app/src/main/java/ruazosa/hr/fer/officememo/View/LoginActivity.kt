@@ -61,6 +61,7 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
                 .compose(bindToLifecycle())
                 .subscribe({user->
                     //onSuccess
+                    GlobalData.firebaseUser = user
                     val ref: DatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(user.uid)
                     ref.data().compose(bindToLifecycle())
                             .subscribe({
@@ -68,6 +69,7 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
                                 if (it.exists()) {
                                     val u: User = it.getValue(User::class.java)
                                     GlobalData.user = u
+                                    GlobalData.hasUser = true
                                     startActivity<MainActivity>("has_user" to true)
                                     finish()
                                 }
@@ -95,13 +97,13 @@ class LoginActivity : RxAppCompatActivity(), GoogleApiClient.OnConnectionFailedL
         mAuth.signInWithCredential(credential).addOnCompleteListener(this){ task ->
             if (task.isSuccessful) {
                 val user = mAuth.currentUser
+                GlobalData.firebaseUser = user!!
                 indefProgress.show()
-                val ref: DatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(user?.uid)
+                val ref: DatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(user.uid)
                 ref.data().compose(bindToLifecycle())
                         .subscribe({
                             indefProgress.hide()
                             if (it.exists()) {
-                                println("Saving to GlobalData.")
                                 val u: User = it.getValue(User::class.java)
                                 GlobalData.user = u
                                 GlobalData.hasUser = true
