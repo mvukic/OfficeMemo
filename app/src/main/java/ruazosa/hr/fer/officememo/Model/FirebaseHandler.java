@@ -31,12 +31,11 @@ public class FirebaseHandler {
      * @param department department object that you want to save to firebase database1
     *
 */
-    public static Single<String> pushDepartment(Department department){
-        return Single.create(e -> {
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference(departmentRef).push();
-            ref.setValue(department);
-            e.onSuccess(ref.getKey());
-        });
+    public static String pushDepartment(Department department){
+        DatabaseReference pushRef = FirebaseDatabase.getInstance().getReference(departmentRef).push();
+        department.setDid(pushRef.getKey());
+        pushRef.setValue(department);
+        return pushRef.getKey();
     }
 
     /**

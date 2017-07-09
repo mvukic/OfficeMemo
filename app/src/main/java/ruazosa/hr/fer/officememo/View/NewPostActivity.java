@@ -62,6 +62,7 @@ import com.vansuita.pickimage.listeners.IPickResult;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -317,8 +318,13 @@ public class NewPostActivity extends AppCompatActivity {//implements IPickResult
                     List<Feature> featureList = new ArrayList<>();
                     Feature labelDetection = new Feature();
                     labelDetection.setType("LABEL_DETECTION");
-                    labelDetection.setMaxResults(10);
+                    labelDetection.setMaxResults(4);
                     featureList.add(labelDetection);
+
+                    Feature landmarkDetection = new Feature();
+                    landmarkDetection.setType("LANDMARK_DETECTION");
+                    landmarkDetection.setMaxResults(1);
+                    featureList.add(landmarkDetection);
 
                     List<AnnotateImageRequest> imageList = new ArrayList<>();
                     AnnotateImageRequest annotateImageRequest = new AnnotateImageRequest();
@@ -358,14 +364,29 @@ public class NewPostActivity extends AppCompatActivity {//implements IPickResult
 
     private String convertResponseToString(BatchAnnotateImagesResponse response) {
         StringBuilder message = new StringBuilder();
+        List<EntityAnnotation> landmarks = response.getResponses().get(0).getLandmarkAnnotations();
+        if(landmarks!=null){
+            for (EntityAnnotation landmark : landmarks) {
+                message.append("#");
+                for (String s : landmark.getDescription().split(" ")) {
+                    message.append(s);
+                }
+
+                message.append(" ");
+            }
+        }
         List<EntityAnnotation> labels = response.getResponses().get(0).getLabelAnnotations();
         if (labels != null) {
             for (EntityAnnotation label : labels) {
                 message.append("#");
-                message.append(label.getDescription());
+                for (String s : label.getDescription().split(" ")) {
+                    message.append(s);
+                }
                 message.append(" ");
             }
-        } else {
+        }
+
+        if(message.toString().isEmpty()) {
             Snackbar.make(getCurrentFocus(), R.string.not_found, Snackbar.LENGTH_LONG).show();
         }
         Log.d("RESULT", message.toString());

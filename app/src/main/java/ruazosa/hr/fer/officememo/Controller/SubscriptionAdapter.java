@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.firebase.database.FirebaseDatabase;
+import com.jakewharton.rxbinding2.view.RxView;
 
 import java.util.List;
 
