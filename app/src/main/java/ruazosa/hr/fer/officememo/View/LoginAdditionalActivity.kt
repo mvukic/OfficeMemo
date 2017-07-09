@@ -8,14 +8,10 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.design.widget.Snackbar
 import android.widget.*
-import com.github.b3er.rxfirebase.auth.rxGetCurrentUser
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.storage.FirebaseStorage
 import com.jakewharton.rxbinding2.view.clicks
-import com.jakewharton.rxbinding2.view.enabled
 import com.jakewharton.rxbinding2.widget.textChanges
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import io.reactivex.rxkotlin.Observables
