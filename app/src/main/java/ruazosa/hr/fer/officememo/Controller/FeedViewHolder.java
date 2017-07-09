@@ -22,6 +22,7 @@ import ruazosa.hr.fer.officememo.Model.Post;
 import ruazosa.hr.fer.officememo.Model.User;
 import ruazosa.hr.fer.officememo.R;
 import ruazosa.hr.fer.officememo.Utils.GlobalData;
+import ruazosa.hr.fer.officememo.View.DepartmentProfileActivity;
 import ruazosa.hr.fer.officememo.View.UserProfileActivity;
 
 /**
@@ -30,7 +31,7 @@ import ruazosa.hr.fer.officememo.View.UserProfileActivity;
 
 class FeedViewHolder extends RecyclerView.ViewHolder{
     Context context;
-    TextView name, content, title, date, location, likes, upvote, comment;
+    TextView name, content, title, date, location, likes, upvote, comment, shortname;
     FeedAdapter  adapter;
     ImageView profile, image, locationtag;
     public FeedViewHolder(Context context,View itemView, FeedAdapter adapter) {
@@ -48,6 +49,7 @@ class FeedViewHolder extends RecyclerView.ViewHolder{
         upvote = (TextView)itemView.findViewById(R.id.buttonLike);
         comment = (TextView) itemView.findViewById(R.id.buttonComment);
         locationtag = (ImageView)itemView.findViewById(R.id.imageViewLocationTag);
+        shortname = (TextView)itemView.findViewById(R.id.textViewFeedDepartmentShortName);
 
         RxView.clicks(name).subscribe(o -> {
             Intent intent = new Intent(context, UserProfileActivity.class);
@@ -55,6 +57,13 @@ class FeedViewHolder extends RecyclerView.ViewHolder{
             intent.putExtra("uid", post.getUid());
             context.startActivity(intent);
         });
+        RxView.clicks(shortname).subscribe(o -> {
+            Intent intent = new Intent(context, DepartmentProfileActivity.class);
+            Post post = adapter.getList().get(getAdapterPosition());
+            intent.putExtra("did", post.getDid());
+            context.startActivity(intent);
+        });
+
         RxView.clicks(upvote).subscribe(o -> {
             Post post = adapter.getList().get(getAdapterPosition());
             if(post.getUpVotesList().contains(GlobalData.user.getUid())){

@@ -49,6 +49,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder> {
             holder.name.setText(user.getName() + " " + user.getLastName());
 
         });
+        RxFirebaseDatabase.observeSingleValueEvent(FirebaseDatabase.getInstance().getReference("departments")
+                .child(post.getDid()), DataSnapshotMapper.of(Department.class)).subscribe(department -> {
+            holder.shortname.setText(" " + department.getShortName()+ " ");
+
+        });
         holder.date.setText(post.getTimeStamp());
         holder.title.setText(post.getTitle());
         holder.content.setText(post.getContent());

@@ -48,7 +48,6 @@
                 android:text="TextView"
                 android:textAppearance="@android:style/TextAppearance.Material.Medium"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/imageViewFeedProfile"
                 app:layout_constraintEnd_toStartOf="@+id/textViewFeedDate"
                 app:layout_constraintStart_toEndOf="@+id/imageViewFeedProfile"
                 app:layout_constraintTop_toTopOf="@+id/imageViewFeedProfile" />
@@ -134,6 +133,21 @@
                 app:srcCompat="@drawable/ic_location_on_black_18dp"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewFeedLocation"
                 android:layout_marginBottom="0dp" />
+
+            <TextView
+                android:id="@+id/textViewFeedDepartmentShortName"
+                android:textColor="@color/accent"
+                android:textAllCaps="true"
+                android:background="@color/md_blue_grey_100"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:text="TextView"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewFeedProfile"
+                app:layout_constraintTop_toBottomOf="@+id/textViewFeedName"
+                app:layout_constraintStart_toEndOf="@+id/imageViewFeedProfile"
+                android:layout_marginStart="8dp" />
 
         </android.support.constraint.ConstraintLayout>
 
