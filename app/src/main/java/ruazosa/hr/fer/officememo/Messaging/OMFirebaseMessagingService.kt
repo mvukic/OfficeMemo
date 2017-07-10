@@ -15,6 +15,9 @@ import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.singleTop
 import ruazosa.hr.fer.officememo.R
 import ruazosa.hr.fer.officememo.Utils.GlobalData
+import android.media.RingtoneManager
+
+
 
 
 class OMFirebaseMessagingService: FirebaseMessagingService() {
@@ -47,12 +50,13 @@ class OMFirebaseMessagingService: FirebaseMessagingService() {
             ).singleTop()
             Log.e("MSG","IN")
             val resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-
+            val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             val mBuilder = NotificationCompat.Builder(this)
                     .setSmallIcon(R.drawable.ic_sms_black_24dp)
                     .setContentTitle(remoteMessage.notification.title)
                     .setContentText(remoteMessage.notification.body)
                     .setContentIntent(resultPendingIntent)
+                    .setSound(alarmSound)
 
             val mNotifyMgr = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             mNotifyMgr.notify(1889, mBuilder.build())
