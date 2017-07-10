@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="me"
+        android:enabled="true"
+        android:icon="@drawable/ic_face_black_24dp"
+        android:shortcutShortLabel="@string/me"
+        android:shortcutLongLabel="@string/me"
+        android:shortcutDisabledMessage="@string/me">
+        <intent
+            android:action="ruazosa.hr.fer.officememo.SHOWME"
+            android:targetPackage="ruazosa.hr.fer.officememo"
+            android:targetClass="ruazosa.hr.fer.officememo.View.MainActivity" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="newpost"
+        android:enabled="true"
+        android:icon="@drawable/ic_sms_black_24dp"
+        android:shortcutShortLabel="@string/newpost"
+        android:shortcutLongLabel="@string/newpost"
+        android:shortcutDisabledMessage="@string/newpost">
+        <intent
+            android:action="ruazosa.hr.fer.officememo.NEWPOST"
+            android:targetPackage="ruazosa.hr.fer.officememo"
+            android:targetClass="ruazosa.hr.fer.officememo.View.MainActivity" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="newdept"
+        android:enabled="true"
+        android:icon="@drawable/ic_people_black_24dp"
+        android:shortcutShortLabel="@string/newdept"
+        android:shortcutLongLabel="@string/newdept"
+        android:shortcutDisabledMessage="@string/newdept">
+        <intent
+            android:action="ruazosa.hr.fer.officememo.NEWDEPT"
+            android:targetPackage="ruazosa.hr.fer.officememo"
+            android:targetClass="ruazosa.hr.fer.officememo.View.MainActivity" />
+    </shortcut>
+</shortcuts>
+

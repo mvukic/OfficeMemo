@@ -34,4 +34,7 @@
     <string name="last_name">Last Name</string>
     <string name="profile_image">Profile image</string>
     <string name="cover_image">Cover image</string>
+    <string name="me">Me</string>
+    <string name="newpost">New Post</string>
+    <string name="newdept">New Department</string>
 </resources>

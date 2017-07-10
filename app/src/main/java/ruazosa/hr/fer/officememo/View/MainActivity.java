@@ -64,19 +64,20 @@ public class MainActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Intent i = getIntent();
+//        Intent i = getIntent();
 
         // Additional info when coming from notification tap
-        if(i.hasExtra("pid")){
-            Log.d("MA","Notification pid: "+i.getStringExtra("pid"));
-        }
-        if(i.hasExtra("did")){
-            Log.d("MA","Notification did: "+i.getStringExtra("did"));
-        }
-        if(i.hasExtra("uid")){
-            Log.d("MA","Notification uid: "+i.getStringExtra("uid"));
-        }
+//        if(i.hasExtra("pid")){
+//            Log.d("MA","Notification pid: "+i.getStringExtra("pid"));
+//        }
+//        if(i.hasExtra("did")){
+//            Log.d("MA","Notification did: "+i.getStringExtra("did"));
+//        }
+//        if(i.hasExtra("uid")){
+//            Log.d("MA","Notification uid: "+i.getStringExtra("uid"));
+//        }
         // MaterialDrawer use Picasso
+
         DrawerImageLoader.init(new AbstractDrawerImageLoader() {
             @Override
             public void set(ImageView imageView, Uri uri, Drawable placeholder) {
@@ -150,6 +151,15 @@ public class MainActivity extends BaseActivity {
         recyclerView.setLayoutManager(llm);
         recyclerView.setAdapter(adapter);
         addListeners();
+
+
+        if("ruazosa.hr.fer.officememo.SHOWME".equals(getIntent().getAction())){
+            drawer.setSelection(0,true);
+        }else if("ruazosa.hr.fer.officememo.NEWPOST".equals(getIntent().getAction())){
+            drawer.setSelection(1,true);
+        }else if("ruazosa.hr.fer.officememo.NEWDEPT".equals(getIntent().getAction())){
+            drawer.setSelection(2,true);
+        }
     }
 
     private void addListeners() {

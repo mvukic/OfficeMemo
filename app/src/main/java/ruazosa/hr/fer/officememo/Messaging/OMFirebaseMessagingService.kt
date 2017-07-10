@@ -39,7 +39,11 @@ class OMFirebaseMessagingService: FirebaseMessagingService() {
             showNotification = GlobalData.user.uid == userId
         }
         if (!showNotification) {
-            val resultIntent = intentFor<MainActivity>("pid" to map["pid"],"did" to map["did"],"uid" to map["uid"]).singleTop()
+            val resultIntent = intentFor<MainActivity>(
+                    "pid" to map["pid"],
+                    "did" to map["did"],
+                    "uid" to map["uid"]
+            ).singleTop()
 
             val resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
@@ -52,6 +56,5 @@ class OMFirebaseMessagingService: FirebaseMessagingService() {
             val mNotifyMgr = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             mNotifyMgr.notify(1889, mBuilder.build())
         }
-
     }
 }
