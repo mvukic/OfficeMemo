@@ -57,6 +57,11 @@ class OMFirebaseMessagingService: FirebaseMessagingService() {
                     .setContentText(remoteMessage.notification.body)
                     .setContentIntent(resultPendingIntent)
                     .setSound(alarmSound)
+            if(map["commentPosted"] == "yes"){
+                mBuilder.setVibrate(longArrayOf(500,500))
+            }else{
+                mBuilder.setVibrate(longArrayOf(1000,1000))
+            }
 
             val mNotifyMgr = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             mNotifyMgr.notify(1889, mBuilder.build())
