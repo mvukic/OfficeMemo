@@ -56,6 +56,7 @@ class OMFirebaseMessagingService: FirebaseMessagingService() {
                     .setContentTitle(remoteMessage.notification.title)
                     .setContentText(remoteMessage.notification.body)
                     .setContentIntent(resultPendingIntent)
+                    .setAutoCancel(true)
                     .setSound(alarmSound)
             if(map["commentPosted"] == "yes"){
                 mBuilder.setVibrate(longArrayOf(500,500))
