@@ -64,20 +64,17 @@ public class MainActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        Intent i = getIntent();
+        Intent i = getIntent();
 
-        // Additional info when coming from notification tap
-//        if(i.hasExtra("pid")){
-//            Log.d("MA","Notification pid: "+i.getStringExtra("pid"));
-//        }
-//        if(i.hasExtra("did")){
-//            Log.d("MA","Notification did: "+i.getStringExtra("did"));
-//        }
-//        if(i.hasExtra("uid")){
-//            Log.d("MA","Notification uid: "+i.getStringExtra("uid"));
-//        }
+
+        if(i.hasExtra("commentPosted")) {
+            if(i.getStringExtra("commentPosted").equals("yes")){
+                Intent showCommentsIntent = new Intent(this, CommentActivity.class);
+                showCommentsIntent.putExtra("pid", i.getStringExtra("pid"));
+                startActivity(showCommentsIntent);
+            }
+        }
         // MaterialDrawer use Picasso
-
         DrawerImageLoader.init(new AbstractDrawerImageLoader() {
             @Override
             public void set(ImageView imageView, Uri uri, Drawable placeholder) {

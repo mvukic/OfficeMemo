@@ -26,25 +26,26 @@ class OMFirebaseMessagingService: FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage?) {
         if(remoteMessage == null) return;
         Log.d(TAG, "From: " + remoteMessage.from)
-
-        if (remoteMessage.getData().isNotEmpty()) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData())
-            map = remoteMessage.getData()
+        Log.e("MSG","Received")
+        if (remoteMessage.data.isNotEmpty()) {
+            Log.d(TAG, "Message data payload: " + remoteMessage.data)
+            map = remoteMessage.data
 
             val postId = map["pid"]
             val departmentId = map["did"]
             val userId = map["uid"]
+            val commentPosted = map["commentPosted"]
 
-            // Comment below for enabling notifications from myself
-            showNotification = GlobalData.user.uid == userId
+            showNotification = if(commentPosted == "yes") true else GlobalData.user.uid != userId
         }
-        if (!showNotification) {
+        if (showNotification) {
             val resultIntent = intentFor<MainActivity>(
                     "pid" to map["pid"],
                     "did" to map["did"],
-                    "uid" to map["uid"]
+                    "uid" to map["uid"],
+                    "commentPosted" to map["commentPosted"]
             ).singleTop()
-
+            Log.e("MSG","IN")
             val resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
             val mBuilder = NotificationCompat.Builder(this)
